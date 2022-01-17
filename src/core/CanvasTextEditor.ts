@@ -12,7 +12,8 @@ export class CanvasTextEditor {
     requestAnimationFrame(() => {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.fillStyle = '#000';
-      this.ctx.fillText('Hello, world!', 0, 10);
+      this.ctx.font = '16px sans-serif';
+      this.ctx.fillText('Hello, world!', 0, 16);
     });
   }
 }
