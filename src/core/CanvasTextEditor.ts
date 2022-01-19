@@ -11,11 +11,8 @@ export class CanvasTextEditor {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     this.textList = [
-      new CanvasTextEditorText('abc', 100, 100, this.ctx),
-      new CanvasTextEditorText('def', 100, 200, this.ctx),
-      new CanvasTextEditorText('ghi', 100, 300, this.ctx),
+      new CanvasTextEditorText('abcdefghijklmnopqrst', 100, 100, this.ctx),
     ];
-    this.ctx.fillStyle = '#000';
     this.ctx.font = '100px sans-serif';
     this.ctx.textBaseline = 'top';
     requestAnimationFrame(this.render);
@@ -24,7 +21,8 @@ export class CanvasTextEditor {
 
   render = (time: number) => {
     requestAnimationFrame(this.render);
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.fillStyle = '#fff';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     this.textList.forEach((text) => text.render());
     if (this.checkMouseIsHoverOnText()) {
       this.canvas.style.cursor = 'text';

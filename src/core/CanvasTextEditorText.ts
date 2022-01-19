@@ -5,6 +5,7 @@ export class CanvasTextEditorText {
   width = 0;
   height = 0;
   ctx: CanvasRenderingContext2D;
+  color = '#000';
 
   constructor(content: string, left: number, top: number, ctx: CanvasRenderingContext2D) {
     this.content = content;
@@ -17,6 +18,7 @@ export class CanvasTextEditorText {
   }
 
   render = () => {
+    this.ctx.fillStyle = this.color;
     this.ctx.fillText(this.content, this.left, this.top);
   };
 }
