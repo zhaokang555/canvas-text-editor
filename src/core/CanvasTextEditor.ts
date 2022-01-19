@@ -4,7 +4,8 @@ export class CanvasTextEditor {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   textList: CanvasTextEditorText[] = [];
-  mousePos: { x: number, y: number } = {x: 0, y: 0};
+  mouseX = 0;
+  mouseY = 0;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -34,16 +35,16 @@ export class CanvasTextEditor {
 
   handleMousemove = (evt: MouseEvent) => {
     const rect = this.canvas.getBoundingClientRect();
-    this.mousePos.x = evt.clientX - rect.left;
-    this.mousePos.y = evt.clientY - rect.top;
+    this.mouseX = evt.clientX - rect.left;
+    this.mouseY = evt.clientY - rect.top;
   };
 
   checkMouseIsHoverOnText = () => {
     return this.textList.some(text => {
-      return this.mousePos.x >= text.left
-        && this.mousePos.y >= text.top
-        && this.mousePos.x <= text.left + text.width
-        && this.mousePos.y <= text.top + text.height;
+      return this.mouseX >= text.left
+        && this.mouseY >= text.top
+        && this.mouseX <= text.left + text.width
+        && this.mouseY <= text.top + text.height;
     });
   };
 }
