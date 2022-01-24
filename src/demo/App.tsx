@@ -6,7 +6,7 @@ function App() {
 
   useEffect(() => {
     if (canvas.current) {
-      new CanvasTextEditor(canvas.current);
+      new CanvasTextEditor(canvas.current, {left: 100, top: 100});
     }
   }, []);
 

@@ -1,46 +1,67 @@
-import { CanvasTextEditorText } from './CanvasTextEditorText';
+interface IOptions {
+  left?: number;
+  top?: number;
+  width?: number;
+  height?: number;
+  borderColor?: string;
+  borderWidth?: number;
+}
 
 export class CanvasTextEditor {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
-  textList: CanvasTextEditorText[] = [];
-  mouseX = 0;
-  mouseY = 0;
+  left = 0;
+  top = 0;
+  width = 400;
+  height = 300;
+  borderColor = '#999';
+  borderWidth = 2;
+  backgroundColor = '#fff';
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, options?: IOptions) {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
-    this.textList = [
-      new CanvasTextEditorText('abcdefghijklmnopqrstuvwxyz', 200, 100, this.ctx, this.canvas),
-    ];
+    if (options) {
+      // @ts-ignore
+      Object.entries(options).forEach(([key, value]) => this[key] = value);
+    }
+
     requestAnimationFrame(this.render);
-    this.canvas.addEventListener('mousemove', this.handleMousemove);
   }
 
   render = (time: number) => {
     requestAnimationFrame(this.render);
-    this.ctx.fillStyle = '#fff';
+    this.clearCanvas();
+    this.renderBorder();
+  };
+
+  clearCanvas = () => {
+    this.ctx.fillStyle = this.backgroundColor;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.textList.forEach((text) => text.render());
-    if (this.checkMouseIsHoverOnText()) {
-      this.canvas.style.cursor = 'text';
-    } else {
-      this.canvas.style.cursor = 'default';
-    }
   };
 
-  handleMousemove = (evt: MouseEvent) => {
-    const rect = this.canvas.getBoundingClientRect();
-    this.mouseX = evt.clientX - rect.left;
-    this.mouseY = evt.clientY - rect.top;
+  renderBorder = () => {
+    this.ctx.strokeStyle = this.borderColor;
+    this.ctx.lineWidth = this.borderWidth;
+    this.ctx.strokeRect(this.left, this.top, this.width, this.height);
+
+    this.renderBorderCircle(this.left, this.top);
+    this.renderBorderCircle(this.left, this.top + this.height / 2);
+    this.renderBorderCircle(this.left, this.top + this.height);
+    this.renderBorderCircle(this.left + this.width / 2, this.top);
+    this.renderBorderCircle(this.left + this.width / 2, this.top + this.height);
+    this.renderBorderCircle(this.left + this.width, this.top);
+    this.renderBorderCircle(this.left + this.width, this.top + this.height / 2);
+    this.renderBorderCircle(this.left + this.width, this.top + this.height);
   };
 
-  checkMouseIsHoverOnText = () => {
-    return this.textList.some(text => {
-      return this.mouseX >= text.left
-        && this.mouseY >= text.top
-        && this.mouseX <= text.left + text.width
-        && this.mouseY <= text.top + text.height;
-    });
+  renderBorderCircle = (x: number, y: number) => {
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, 5, 0, Math.PI * 2);
+    this.ctx.fillStyle = this.backgroundColor;
+    this.ctx.fill();
+    this.ctx.strokeStyle = this.borderColor;
+    this.ctx.stroke();
+    this.ctx.closePath();
   };
 }
