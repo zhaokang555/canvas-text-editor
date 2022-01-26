@@ -44,6 +44,8 @@ export class CanvasTextEditor {
           new Char('i', this.ctx, {color: 'orange', fontSize: 80}),
           new Char('j', this.ctx, {color: 'yellow', fontSize: 120}),
           new Char('k', this.ctx, {color: 'green', fontSize: 120}),
+          new Char('赵', this.ctx, {color: 'lightblue', fontSize: 120}),
+          new Char('康', this.ctx, {color: 'blue', fontSize: 120}),
         ],
         this.ctx,
         this.left + this.paddingLeft,

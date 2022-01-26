@@ -4,30 +4,35 @@ interface IOptions {
 }
 
 export default class CanvasTextEditorChar {
-  left = 0;
-  top = 0;
   width: number;
   height: number;
-
+  textMetrics: TextMetrics;
+  left = 0;
+  top = 0;
   color = '#000';
   fontSize = 50;
-  textBaseline: CanvasTextBaseline = 'top';
+  boundingBoxTop = 0;
 
   constructor(private char: string, private ctx: CanvasRenderingContext2D, options: IOptions = {}) {
     // @ts-ignore
     Object.entries(options).forEach(([key, value]) => this[key] = value);
     this.setStyle();
-    const textMetrics = ctx.measureText(char);
-    this.width = textMetrics.width;
-    this.height = textMetrics.fontBoundingBoxDescent;
+    this.textMetrics = ctx.measureText(char);
+    this.width = this.textMetrics.width;
+    this.height = this.textMetrics.fontBoundingBoxDescent + this.textMetrics.fontBoundingBoxAscent;
   }
 
   setPosition = (left: number, top: number) => {
     this.left = left;
     this.top = top;
+    this.boundingBoxTop = top - this.textMetrics.fontBoundingBoxAscent;
   };
 
   render = () => {
+    // this.ctx.strokeStyle = 'red';
+    // this.ctx.strokeRect(this.left, this.boundingBoxTop, this.width, this.height);
+    // this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    // this.ctx.fillRect(this.left, this.boundingBoxTop, this.width, this.height);
     this.setStyle();
     this.ctx.fillText(this.char, this.left, this.top);
   };
@@ -35,6 +40,5 @@ export default class CanvasTextEditorChar {
   private setStyle() {
     this.ctx.fillStyle = this.color;
     this.ctx.font = `${this.fontSize}px sans-serif`;
-    this.ctx.textBaseline = this.textBaseline;
   }
 }
