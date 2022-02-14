@@ -29,10 +29,10 @@ export default class CanvasTextEditorChar {
   };
 
   render = () => {
-    // this.ctx.strokeStyle = 'red';
-    // this.ctx.strokeRect(this.left, this.boundingBoxTop, this.width, this.height);
-    // this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    // this.ctx.fillRect(this.left, this.boundingBoxTop, this.width, this.height);
+    this.ctx.strokeStyle = 'red';
+    this.ctx.strokeRect(this.left, this.boundingBoxTop, this.width, this.height);
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    this.ctx.fillRect(this.left, this.boundingBoxTop, this.width, this.height);
     this.setStyle();
     this.ctx.fillText(this.char, this.left, this.top);
   };

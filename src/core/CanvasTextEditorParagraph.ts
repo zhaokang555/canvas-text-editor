@@ -36,16 +36,16 @@ export default class CanvasTextEditorParagraph {
         } else {
           const softLine = new SoftLine(softLineChars, softLineWidth, softLineHeight, this.ctx, this.left, top);
           this.softLines.push(softLine);
-
           top += softLineHeight;
 
           softLineChars = [char];
-          softLineWidth = 0;
-          softLineHeight = 0;
+          softLineWidth = char.width;
+          softLineHeight = char.height;
         }
       }
     });
 
+    // 处理最后半行
     if (softLineChars.length > 0) {
       const softLine = new SoftLine(softLineChars, softLineWidth, softLineHeight, this.ctx, this.left, top);
       this.softLines.push(softLine);
