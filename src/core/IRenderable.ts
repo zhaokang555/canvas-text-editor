@@ -1,3 +1,3 @@
 export interface IRenderable {
-  render: () => void;
+  render: (time: number) => void;
 }

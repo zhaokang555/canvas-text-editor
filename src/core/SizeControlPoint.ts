@@ -1,28 +1,31 @@
-import { IRenderable } from './IRenderable';
-import { IBoundingBox } from './IBoundingBox';
+import { CursorType } from './CursorType';
+import { ResponsiveToMouseHover } from './ResponsiveToMouseHover';
 
-export class SizeControlPoint implements IBoundingBox, IRenderable {
-  radius = 5;
-  left: number;
-  top: number;
-  width = this.radius * 2;
-  height = this.radius * 2;
+const radius = 5;
+
+export class SizeControlPoint extends ResponsiveToMouseHover {
   borderColor = '#999';
   backgroundColor = '#fff';
 
-  constructor(private centerX: number, private centerY: number, private ctx: CanvasRenderingContext2D) {
-    this.left = centerX - this.radius;
-    this.top = centerY - this.radius;
+  constructor(private centerX: number, private centerY: number, public cursorType: CursorType, ctx: CanvasRenderingContext2D) {
+    const left = centerX - radius;
+    const top = centerY - radius;
+    const width = 2 * radius;
+    const height = 2 * radius;
+    super(left, top, width, height, cursorType, ctx);
   }
 
-  render() {
+  render = () => {
+    super.render();
+
     this.ctx.beginPath();
     this.ctx.setLineDash([]);
-    this.ctx.arc(this.centerX, this.centerY, this.radius, 0, Math.PI * 2);
+    this.ctx.arc(this.centerX, this.centerY, radius, 0, Math.PI * 2);
     this.ctx.fillStyle = this.backgroundColor;
     this.ctx.fill();
     this.ctx.strokeStyle = this.borderColor;
     this.ctx.stroke();
     this.ctx.closePath();
-  }
+  };
+
 }

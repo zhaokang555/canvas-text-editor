@@ -2,6 +2,9 @@ import Paragraph from './CanvasTextEditorParagraph';
 import Char from './CanvasTextEditorChar';
 import { IRenderable } from './IRenderable';
 import { SizeControlPoint } from './SizeControlPoint';
+import { CursorType } from './CursorType';
+
+const {defaultCursor, ewResize, nsResize, neswResize, nwseResize} = CursorType;
 
 interface IOptions {
   left?: number;
@@ -25,6 +28,7 @@ export class CanvasTextEditor implements IRenderable {
   paddingLeft = 10;
   paddingTop = 10;
   paragraphs: Paragraph[] = [];
+  private sizeControlPoints: SizeControlPoint[] = [];
 
   constructor(canvas: HTMLCanvasElement, options: IOptions = {}) {
     // @ts-ignore
@@ -49,8 +53,8 @@ export class CanvasTextEditor implements IRenderable {
           new Char('k', this.ctx, {color: 'green', fontSize: 80}),
           new Char('s', this.ctx, {color: 'lightblue', fontSize: 80}),
           new Char('-', this.ctx, {color: 'blue', fontSize: 80}),
-          new Char('骚', this.ctx, {color: 'purple', fontSize: 80}),
-          new Char('窝', this.ctx, {color: 'red', fontSize: 80}),
+          new Char('思', this.ctx, {color: 'purple', fontSize: 80}),
+          new Char('沃', this.ctx, {color: 'red', fontSize: 80}),
         ],
         this.ctx,
         this.left + this.paddingLeft,
@@ -59,19 +63,36 @@ export class CanvasTextEditor implements IRenderable {
       )
     ];
 
+    this.sizeControlPoints = [
+      new SizeControlPoint(this.left, this.top, nwseResize, this.ctx),
+      new SizeControlPoint(this.left, this.top + this.height / 2, ewResize, this.ctx),
+      new SizeControlPoint(this.left, this.top + this.height, neswResize, this.ctx),
+      new SizeControlPoint(this.left + this.width / 2, this.top, nsResize, this.ctx),
+      new SizeControlPoint(this.left + this.width / 2, this.top + this.height, nsResize, this.ctx),
+      new SizeControlPoint(this.left + this.width, this.top, neswResize, this.ctx),
+      new SizeControlPoint(this.left + this.width, this.top + this.height / 2, ewResize, this.ctx),
+      new SizeControlPoint(this.left + this.width, this.top + this.height, nwseResize, this.ctx),
+    ];
+
     requestAnimationFrame(this.render);
+  }
+
+  destructor() {
+    this.sizeControlPoints.forEach(point => point.destructor());
   }
 
   render = () => {
     requestAnimationFrame(this.render);
     this.clearCanvas();
-    this.renderBorder();
     this.paragraphs.forEach(p => p.render());
+    this.renderBorder();
+    this.sizeControlPoints.forEach(point => point.render());
   };
 
   clearCanvas = () => {
     this.ctx.fillStyle = this.backgroundColor;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.canvas.style.cursor = defaultCursor;
   };
 
   renderBorder = () => {
@@ -79,38 +100,5 @@ export class CanvasTextEditor implements IRenderable {
     this.ctx.lineWidth = this.borderWidth;
     this.ctx.setLineDash([3]);
     this.ctx.strokeRect(this.left, this.top, this.width, this.height);
-
-    // this.renderBorderCircle(this.left, this.top);
-    // this.renderBorderCircle(this.left, this.top + this.height / 2);
-    // this.renderBorderCircle(this.left, this.top + this.height);
-    // this.renderBorderCircle(this.left + this.width / 2, this.top);
-    // this.renderBorderCircle(this.left + this.width / 2, this.top + this.height);
-    // this.renderBorderCircle(this.left + this.width, this.top);
-    // this.renderBorderCircle(this.left + this.width, this.top + this.height / 2);
-    // this.renderBorderCircle(this.left + this.width, this.top + this.height);
-
-    const sizeControlPoints = [
-      new SizeControlPoint(this.left, this.top, this.ctx),
-      new SizeControlPoint(this.left, this.top + this.height / 2, this.ctx),
-      new SizeControlPoint(this.left, this.top + this.height, this.ctx),
-      new SizeControlPoint(this.left + this.width / 2, this.top, this.ctx),
-      new SizeControlPoint(this.left + this.width / 2, this.top + this.height, this.ctx),
-      new SizeControlPoint(this.left + this.width, this.top, this.ctx),
-      new SizeControlPoint(this.left + this.width, this.top + this.height / 2, this.ctx),
-      new SizeControlPoint(this.left + this.width, this.top + this.height, this.ctx),
-    ];
-
-    sizeControlPoints.forEach(p => p.render());
   };
-
-  // renderBorderCircle = (x: number, y: number) => {
-  //   this.ctx.beginPath();
-  //   this.ctx.setLineDash([]);
-  //   this.ctx.arc(x, y, 5, 0, Math.PI * 2);
-  //   this.ctx.fillStyle = this.backgroundColor;
-  //   this.ctx.fill();
-  //   this.ctx.strokeStyle = this.borderColor;
-  //   this.ctx.stroke();
-  //   this.ctx.closePath();
-  // };
 }
