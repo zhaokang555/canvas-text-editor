@@ -2,6 +2,7 @@ import { CursorType } from './CursorType';
 import { IResponsiveToMouseHoverOptions, ResponsiveToMouseHover } from './ResponsiveToMouseHover';
 
 const radius = 5;
+const sizeControlPointDefaultZIndex = 1000;
 
 export class SizeControlPoint extends ResponsiveToMouseHover {
   borderColor = '#999';
@@ -18,7 +19,10 @@ export class SizeControlPoint extends ResponsiveToMouseHover {
     const top = centerY - radius;
     const width = 2 * radius;
     const height = 2 * radius;
-    super(left, top, width, height, cursorType, ctx, options);
+    super(left, top, width, height, cursorType, ctx, {
+      zIndex: sizeControlPointDefaultZIndex,
+      ...options,
+    });
   }
 
   render = () => {
