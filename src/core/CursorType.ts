@@ -4,4 +4,5 @@ export enum CursorType {
   nsResize = 'ns-resize',
   neswResize = 'nesw-resize',
   nwseResize = 'nwse-resize',
+  move = 'move',
 }

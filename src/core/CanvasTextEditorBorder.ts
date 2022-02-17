@@ -1,18 +1,40 @@
 import Victor from 'victor';
-import { IRenderable } from './IRenderable';
+import { ResponsiveToMouseHover } from './ResponsiveToMouseHover';
+import { CursorType } from './CursorType';
 
 const borderColor = '#999';
 const borderWidth = 1;
+const borderResponsiveWidth = 10;
+const defaultCanvasTextEditorBorderZIndex = 100;
 
-export default class CanvasTextEditorBorder implements IRenderable {
+export default class CanvasTextEditorBorder extends ResponsiveToMouseHover {
   constructor(
     public from: Victor,
     public to: Victor,
-    protected ctx: CanvasRenderingContext2D,
+    ctx: CanvasRenderingContext2D,
   ) {
+    const normalVector = to.clone().subtract(from).rotate(Math.PI / 2).normalize();
+    const points = [
+      from.clone().add(normalVector.clone().multiplyScalar(borderResponsiveWidth / 2)),
+      from.clone().add(normalVector.clone().multiplyScalar(-borderResponsiveWidth / 2)),
+      to.clone().add(normalVector.clone().multiplyScalar(borderResponsiveWidth / 2)),
+      to.clone().add(normalVector.clone().multiplyScalar(-borderResponsiveWidth / 2)),
+    ];
+    const left = Math.min(...points.map(p => p.x));
+    const top = Math.min(...points.map(p => p.y));
+    const right = Math.max(...points.map(p => p.x));
+    const bottom = Math.max(...points.map(p => p.y));
+    const width = right - left;
+    const height = bottom - top;
+
+    super(left, top, width, height, CursorType.move, ctx, {
+      zIndex: defaultCanvasTextEditorBorderZIndex,
+    });
   }
 
   render() {
+    super.render();
+
     this.ctx.beginPath();
     this.ctx.strokeStyle = borderColor;
     this.ctx.lineWidth = borderWidth;
