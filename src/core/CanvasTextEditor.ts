@@ -3,6 +3,7 @@ import Char from './CanvasTextEditorChar';
 import { IRenderable } from './IRenderable';
 import { SizeControlPoint } from './SizeControlPoint';
 import { CursorType } from './CursorType';
+import { ResponsiveToMouseHover } from './ResponsiveToMouseHover';
 
 const {defaultCursor, ewResize, nsResize, neswResize, nwseResize} = CursorType;
 
@@ -39,22 +40,34 @@ export class CanvasTextEditor implements IRenderable {
     this.paragraphs = [
       new Paragraph(
         [
-          new Char('/', this.ctx, {color: 'purple', fontSize: 80}),
-          new Char('t', this.ctx, {color: 'red', fontSize: 80}),
-          new Char('h', this.ctx, {color: 'orange', fontSize: 80}),
-          new Char('o', this.ctx, {color: 'yellow', fontSize: 80}),
-          new Char('u', this.ctx, {color: 'green', fontSize: 80}),
-          new Char('g', this.ctx, {color: 'lightblue', fontSize: 80}),
-          new Char('h', this.ctx, {color: 'blue', fontSize: 80}),
-          new Char('t', this.ctx, {color: 'purple', fontSize: 80}),
-          new Char('w', this.ctx, {color: 'red', fontSize: 80}),
+          new Char('W', this.ctx, {color: 'red', fontSize: 80}),
           new Char('o', this.ctx, {color: 'orange', fontSize: 80}),
           new Char('r', this.ctx, {color: 'yellow', fontSize: 80}),
           new Char('k', this.ctx, {color: 'green', fontSize: 80}),
-          new Char('s', this.ctx, {color: 'lightblue', fontSize: 80}),
-          new Char('-', this.ctx, {color: 'blue', fontSize: 80}),
-          new Char('思', this.ctx, {color: 'purple', fontSize: 80}),
-          new Char('沃', this.ctx, {color: 'red', fontSize: 80}),
+          new Char('e', this.ctx, {color: 'lightblue', fontSize: 80}),
+          new Char('r', this.ctx, {color: 'blue', fontSize: 80}),
+          new Char('s', this.ctx, {color: 'purple', fontSize: 80}),
+          new Char(' ', this.ctx, {color: 'red', fontSize: 80}),
+          new Char('o', this.ctx, {color: 'orange', fontSize: 80}),
+          new Char('f', this.ctx, {color: 'yellow', fontSize: 80}),
+          new Char(' ', this.ctx, {color: 'green', fontSize: 80}),
+          new Char('t', this.ctx, {color: 'lightblue', fontSize: 80}),
+          new Char('h', this.ctx, {color: 'blue', fontSize: 80}),
+          new Char('e', this.ctx, {color: 'purple', fontSize: 80}),
+          new Char(' ', this.ctx, {color: 'red', fontSize: 80}),
+          new Char('w', this.ctx, {color: 'orange', fontSize: 80}),
+          new Char('o', this.ctx, {color: 'yellow', fontSize: 80}),
+          new Char('r', this.ctx, {color: 'green', fontSize: 80}),
+          new Char('l', this.ctx, {color: 'lightblue', fontSize: 80}),
+          new Char('d', this.ctx, {color: 'blue', fontSize: 80}),
+          new Char(',', this.ctx, {color: 'purple', fontSize: 80}),
+          new Char(' ', this.ctx, {color: 'red', fontSize: 80}),
+          new Char('u', this.ctx, {color: 'orange', fontSize: 80}),
+          new Char('n', this.ctx, {color: 'yellow', fontSize: 80}),
+          new Char('i', this.ctx, {color: 'green', fontSize: 80}),
+          new Char('t', this.ctx, {color: 'lightblue', fontSize: 80}),
+          new Char('e', this.ctx, {color: 'blue', fontSize: 80}),
+          new Char('!', this.ctx, {color: 'purple', fontSize: 80}),
         ],
         this.ctx,
         this.left + this.paddingLeft,
@@ -87,12 +100,14 @@ export class CanvasTextEditor implements IRenderable {
     this.paragraphs.forEach(p => p.render());
     this.renderBorder();
     this.sizeControlPoints.forEach(point => point.render());
+    this.canvas.style.cursor = ResponsiveToMouseHover.topLayerCursorType;
   };
 
   clearCanvas = () => {
     this.ctx.fillStyle = this.backgroundColor;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.canvas.style.cursor = defaultCursor;
+    ResponsiveToMouseHover.topLayerZIndex = -Infinity;
+    ResponsiveToMouseHover.topLayerCursorType = defaultCursor;
   };
 
   renderBorder = () => {

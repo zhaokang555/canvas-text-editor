@@ -2,12 +2,29 @@ import { CursorType } from './CursorType';
 import { IBoundingBox } from './IBoundingBox';
 import { IRenderable } from './IRenderable';
 
+export interface IResponsiveToMouseHoverOptions {
+  zIndex?: number;
+}
+
 export class ResponsiveToMouseHover implements IBoundingBox, IRenderable {
+  public static topLayerZIndex = -Infinity;
+  public static topLayerCursorType = CursorType.defaultCursor;
+  public zIndex = 0;
   private mouseX = -1;
   private mouseY = -1;
   private isMouseHovering = false;
 
-  constructor(public left: number, public top: number, public width: number, public height: number, public cursorType: CursorType, protected ctx: CanvasRenderingContext2D) {
+  constructor(
+    public left: number,
+    public top: number,
+    public width: number,
+    public height: number,
+    public cursorType: CursorType,
+    protected ctx: CanvasRenderingContext2D,
+    options: IResponsiveToMouseHoverOptions = {},
+  ) {
+    // @ts-ignore
+    Object.entries(options).forEach(([key, value]) => this[key] = value);
     ctx.canvas.addEventListener('mousemove', this.handleMouseMove);
   }
 
@@ -17,7 +34,10 @@ export class ResponsiveToMouseHover implements IBoundingBox, IRenderable {
 
   render() {
     if (this.isMouseHovering) {
-      this.ctx.canvas.style.cursor = this.cursorType;
+      if (this.zIndex >= ResponsiveToMouseHover.topLayerZIndex) {
+        ResponsiveToMouseHover.topLayerZIndex = this.zIndex;
+        ResponsiveToMouseHover.topLayerCursorType = this.cursorType;
+      }
     }
   }
 

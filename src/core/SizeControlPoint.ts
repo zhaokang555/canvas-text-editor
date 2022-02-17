@@ -1,5 +1,5 @@
 import { CursorType } from './CursorType';
-import { ResponsiveToMouseHover } from './ResponsiveToMouseHover';
+import { IResponsiveToMouseHoverOptions, ResponsiveToMouseHover } from './ResponsiveToMouseHover';
 
 const radius = 5;
 
@@ -7,12 +7,18 @@ export class SizeControlPoint extends ResponsiveToMouseHover {
   borderColor = '#999';
   backgroundColor = '#fff';
 
-  constructor(private centerX: number, private centerY: number, public cursorType: CursorType, ctx: CanvasRenderingContext2D) {
+  constructor(
+    private centerX: number,
+    private centerY: number,
+    public cursorType: CursorType,
+    ctx: CanvasRenderingContext2D,
+    options: IResponsiveToMouseHoverOptions = {},
+  ) {
     const left = centerX - radius;
     const top = centerY - radius;
     const width = 2 * radius;
     const height = 2 * radius;
-    super(left, top, width, height, cursorType, ctx);
+    super(left, top, width, height, cursorType, ctx, options);
   }
 
   render = () => {
