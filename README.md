@@ -4,6 +4,10 @@ A rich text editor based on HTML Canvas.
 
 基于 HTML Canvas 的富文本编辑器.
 
+## Online Demo
+
+https://zhaokang555.github.io/canvas-text-editor/
+
 ## Environment Setup / 开发环境搭建
 
 Run
