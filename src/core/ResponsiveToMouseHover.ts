@@ -37,6 +37,11 @@ export class ResponsiveToMouseHover implements IBoundingBox, IRenderable {
       if (this.zIndex >= ResponsiveToMouseHover.topLayerZIndex) {
         ResponsiveToMouseHover.topLayerZIndex = this.zIndex;
         ResponsiveToMouseHover.topLayerCursorType = this.cursorType;
+
+        // this.ctx.strokeStyle = 'red';
+        // this.ctx.strokeRect(this.left, this.top, this.width, this.height);
+        // this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        // this.ctx.fillRect(this.left, this.top, this.width, this.height);
       }
     }
   }

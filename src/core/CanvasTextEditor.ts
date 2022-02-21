@@ -44,6 +44,8 @@ export class CanvasTextEditor implements IRenderable {
   }
 
   destructor() {
+    this.paragraphs.forEach(paragraph => paragraph.destructor());
+    this.borders.forEach(border => border.destructor());
     this.sizeControlPoints.forEach(point => point.destructor());
   }
 

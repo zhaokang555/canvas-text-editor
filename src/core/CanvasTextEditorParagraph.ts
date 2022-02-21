@@ -17,6 +17,10 @@ export default class CanvasTextEditorParagraph {
     this.calcLayout();
   }
 
+  destructor() {
+    this.chars.forEach(char => char.destructor());
+  }
+
   private calcLayoutForSoftLines = () => {
     let softLineChars: Char[] = [];
     let softLineWidth = 0;

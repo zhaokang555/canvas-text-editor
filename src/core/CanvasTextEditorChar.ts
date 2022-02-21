@@ -1,12 +1,15 @@
-import { IBoundingBox } from './IBoundingBox';
 import { IRenderable } from './IRenderable';
+import { ResponsiveToMouseHover } from './ResponsiveToMouseHover';
+import { CursorType } from './CursorType';
+
+const defaultZIndex = 10;
 
 interface IOptions {
   color?: string;
   fontSize?: number;
 }
 
-export default class CanvasTextEditorChar implements IBoundingBox, IRenderable {
+export default class CanvasTextEditorChar implements IRenderable {
   width: number;
   height: number;
   textMetrics: TextMetrics;
@@ -14,7 +17,7 @@ export default class CanvasTextEditorChar implements IBoundingBox, IRenderable {
   top = 0;
   color = '#000';
   fontSize = 50;
-  boundingBoxTop = 0;
+  boundingBox: ResponsiveToMouseHover;
 
   constructor(private char: string, private ctx: CanvasRenderingContext2D, options: IOptions = {}) {
     // @ts-ignore
@@ -23,19 +26,26 @@ export default class CanvasTextEditorChar implements IBoundingBox, IRenderable {
     this.textMetrics = ctx.measureText(char);
     this.width = this.textMetrics.width;
     this.height = this.textMetrics.fontBoundingBoxDescent + this.textMetrics.fontBoundingBoxAscent;
+
+    this.boundingBox = new ResponsiveToMouseHover(-Infinity, -Infinity, this.width, this.height, CursorType.text, this.ctx, {zIndex: defaultZIndex});
+  }
+
+  destructor() {
+    this.boundingBox.destructor();
   }
 
   setPosition = (left: number, top: number) => {
     this.left = left;
     this.top = top;
-    this.boundingBoxTop = top - this.textMetrics.fontBoundingBoxAscent;
+
+    const boundingBoxTop = top - this.textMetrics.fontBoundingBoxAscent;
+    this.boundingBox.left = left;
+    this.boundingBox.top = boundingBoxTop;
   };
 
   render = () => {
-    // this.ctx.strokeStyle = 'red';
-    // this.ctx.strokeRect(this.left, this.boundingBoxTop, this.width, this.height);
-    // this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    // this.ctx.fillRect(this.left, this.boundingBoxTop, this.width, this.height);
+    this.boundingBox.render();
+
     this.setStyle();
     this.ctx.fillText(this.char, this.left, this.top);
   };

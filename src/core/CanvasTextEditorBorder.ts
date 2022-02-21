@@ -5,7 +5,7 @@ import { CursorType } from './CursorType';
 const borderColor = '#999';
 const borderWidth = 1;
 const borderResponsiveWidth = 10;
-const defaultCanvasTextEditorBorderZIndex = 100;
+const defaultZIndex = 100;
 
 export default class CanvasTextEditorBorder extends ResponsiveToMouseHover {
   constructor(
@@ -28,7 +28,7 @@ export default class CanvasTextEditorBorder extends ResponsiveToMouseHover {
     const height = bottom - top;
 
     super(left, top, width, height, CursorType.move, ctx, {
-      zIndex: defaultCanvasTextEditorBorderZIndex,
+      zIndex: defaultZIndex,
     });
   }
 
