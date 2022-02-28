@@ -148,6 +148,7 @@ export class CanvasTextEditor implements IRenderable {
       blinkingCursor.left = this.left + this.paddingLeft;
       blinkingCursor.top = this.top;
     }
+    blinkingCursor.show();
     return blinkingCursor;
   }
 }
