@@ -1,4 +1,4 @@
-import { IRenderable } from './IRenderable';
+import IRenderable from './IRenderable';
 import { ResponsiveToMouseHover } from './ResponsiveToMouseHover';
 import { CursorType } from './CursorType';
 
@@ -10,10 +10,7 @@ interface IOptions {
 }
 
 export default class CanvasTextEditorChar implements IRenderable {
-  width: number;
-  height: number;
   textMetrics: TextMetrics;
-  left = 0;
   top = 0;
   color = '#000';
   fontSize = 50;
@@ -24,10 +21,26 @@ export default class CanvasTextEditorChar implements IRenderable {
     Object.entries(options).forEach(([key, value]) => this[key] = value);
     this.setStyle();
     this.textMetrics = ctx.measureText(char);
-    this.width = this.textMetrics.width;
-    this.height = this.textMetrics.fontBoundingBoxDescent + this.textMetrics.fontBoundingBoxAscent;
+    const width = this.textMetrics.width;
+    const height = this.textMetrics.fontBoundingBoxDescent + this.textMetrics.fontBoundingBoxAscent;
 
-    this.boundingBox = new ResponsiveToMouseHover(-Infinity, -Infinity, this.width, this.height, CursorType.text, this.ctx, {zIndex: defaultZIndex});
+    this.boundingBox = new ResponsiveToMouseHover(-Infinity, -Infinity, width, height, CursorType.text, this.ctx, {zIndex: defaultZIndex});
+  }
+
+  get left() {
+    return this.boundingBox.left;
+  }
+
+  get boundingBoxTop() {
+    return this.boundingBox.top;
+  }
+
+  get width() {
+    return this.boundingBox.width;
+  }
+
+  get height() {
+    return this.boundingBox.height;
   }
 
   destructor() {
@@ -35,7 +48,6 @@ export default class CanvasTextEditorChar implements IRenderable {
   }
 
   setPosition = (left: number, top: number) => {
-    this.left = left;
     this.top = top;
 
     const boundingBoxTop = top - this.textMetrics.fontBoundingBoxAscent;

@@ -1,11 +1,12 @@
 import Paragraph from './CanvasTextEditorParagraph';
 import Char from './CanvasTextEditorChar';
-import { IRenderable } from './IRenderable';
+import IRenderable from './IRenderable';
 import { SizeControlPoint } from './SizeControlPoint';
 import { CursorType } from './CursorType';
 import { ResponsiveToMouseHover } from './ResponsiveToMouseHover';
 import Border from './CanvasTextEditorBorder';
 import Victor from 'victor';
+import BlinkingCursor from './BlinkingCursor';
 
 const {defaultCursor, ewResize, nsResize, neswResize, nwseResize} = CursorType;
 
@@ -27,10 +28,10 @@ export class CanvasTextEditor implements IRenderable {
   height = 300;
   backgroundColor = '#fff';
   paddingLeft = 10;
-  paddingTop = 10;
   private paragraphs: Paragraph[] = [];
   private sizeControlPoints: SizeControlPoint[] = [];
   private borders: Border[] = [];
+  private blinkingCursor: BlinkingCursor;
 
   constructor(canvas: HTMLCanvasElement, options: IOptions = {}) {
     // @ts-ignore
@@ -40,6 +41,7 @@ export class CanvasTextEditor implements IRenderable {
     this.initParagraphs();
     this.initBorder();
     this.initSizeControlPoints();
+    this.blinkingCursor = this.createBlinkingCursor();
     requestAnimationFrame(this.render);
   }
 
@@ -55,6 +57,7 @@ export class CanvasTextEditor implements IRenderable {
     this.paragraphs.forEach(p => p.render());
     this.borders.forEach(border => border.render());
     this.sizeControlPoints.forEach(point => point.render());
+    this.blinkingCursor.render();
     this.canvas.style.cursor = ResponsiveToMouseHover.topLayerCursorType;
   };
 
@@ -75,22 +78,22 @@ export class CanvasTextEditor implements IRenderable {
           new Char('k', this.ctx, {color: 'green', fontSize: 80}),
           new Char('e', this.ctx, {color: 'lightblue', fontSize: 80}),
           new Char('r', this.ctx, {color: 'blue', fontSize: 80}),
-          new Char('s', this.ctx, {color: 'purple', fontSize: 80}),
-          new Char(' ', this.ctx, {color: 'red', fontSize: 80}),
-          new Char('o', this.ctx, {color: 'orange', fontSize: 80}),
-          new Char('f', this.ctx, {color: 'yellow', fontSize: 80}),
-          new Char(' ', this.ctx, {color: 'green', fontSize: 80}),
-          new Char('t', this.ctx, {color: 'lightblue', fontSize: 80}),
-          new Char('h', this.ctx, {color: 'blue', fontSize: 80}),
-          new Char('e', this.ctx, {color: 'purple', fontSize: 80}),
-          new Char(' ', this.ctx, {color: 'red', fontSize: 80}),
+          new Char('s', this.ctx, {color: 'purple', fontSize: 40}),
+          new Char(' ', this.ctx),
+          new Char('o', this.ctx, {color: 'orange', fontSize: 40}),
+          new Char('f', this.ctx, {color: 'yellow', fontSize: 40}),
+          new Char(' ', this.ctx),
+          new Char('t', this.ctx, {color: 'lightblue', fontSize: 40}),
+          new Char('h', this.ctx, {color: 'blue', fontSize: 40}),
+          new Char('e', this.ctx, {color: 'purple', fontSize: 40}),
+          new Char(' ', this.ctx),
           new Char('w', this.ctx, {color: 'orange', fontSize: 80}),
           new Char('o', this.ctx, {color: 'yellow', fontSize: 80}),
           new Char('r', this.ctx, {color: 'green', fontSize: 80}),
           new Char('l', this.ctx, {color: 'lightblue', fontSize: 80}),
           new Char('d', this.ctx, {color: 'blue', fontSize: 80}),
           new Char(',', this.ctx, {color: 'purple', fontSize: 80}),
-          new Char(' ', this.ctx, {color: 'red', fontSize: 80}),
+          new Char(' ', this.ctx),
           new Char('u', this.ctx, {color: 'orange', fontSize: 80}),
           new Char('n', this.ctx, {color: 'yellow', fontSize: 80}),
           new Char('i', this.ctx, {color: 'green', fontSize: 80}),
@@ -100,7 +103,7 @@ export class CanvasTextEditor implements IRenderable {
         ],
         this.ctx,
         this.left + this.paddingLeft,
-        this.top + this.paddingTop,
+        this.top,
         this.width - this.paddingLeft
       )
     ];
@@ -131,5 +134,20 @@ export class CanvasTextEditor implements IRenderable {
       new SizeControlPoint(this.left + this.width, this.top + this.height / 2, ewResize, this.ctx),
       new SizeControlPoint(this.left + this.width, this.top + this.height, nwseResize, this.ctx),
     ];
+  }
+
+  private createBlinkingCursor() {
+    const blinkingCursor = new BlinkingCursor(this.ctx);
+    if (this.paragraphs.length > 0) {
+      const lastParagraph = this.paragraphs[this.paragraphs.length - 1];
+      const lastChar = lastParagraph.chars[lastParagraph.chars.length - 1];
+      blinkingCursor.left = lastChar.left + lastChar.width;
+      blinkingCursor.top = lastChar.boundingBoxTop;
+      blinkingCursor.height = lastChar.fontSize;
+    } else {
+      blinkingCursor.left = this.left + this.paddingLeft;
+      blinkingCursor.top = this.top;
+    }
+    return blinkingCursor;
   }
 }

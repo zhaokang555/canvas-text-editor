@@ -7,7 +7,7 @@ export default class CanvasTextEditorParagraph {
   height = 0;
 
   constructor(
-    private chars: Char[],
+    public chars: Char[],
     private ctx: CanvasRenderingContext2D,
     private left: number,
     private top: number,

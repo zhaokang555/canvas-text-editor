@@ -1,6 +1,6 @@
 import { CursorType } from './CursorType';
 import { IBoundingBox } from './IBoundingBox';
-import { IRenderable } from './IRenderable';
+import IRenderable from './IRenderable';
 
 export interface IResponsiveToMouseHoverOptions {
   zIndex?: number;
