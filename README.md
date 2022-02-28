@@ -16,7 +16,7 @@ npm install
 npm run dev
 ```
 
-Then open `http://localhost:3000/`.
+Then open `http://localhost:3000/canvas-text-editor/`.
 
 ## Associated Blogs / 关联博客
 
