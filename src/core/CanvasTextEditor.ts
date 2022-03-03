@@ -38,10 +38,11 @@ export class CanvasTextEditor implements IRenderable {
     Object.entries(options).forEach(([key, value]) => this[key] = value);
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
+    this.blinkingCursor = new BlinkingCursor(this.ctx);
     this.initParagraphs();
     this.initBorder();
     this.initSizeControlPoints();
-    this.blinkingCursor = this.createBlinkingCursor();
+    this.moveBlinkingCursorToEnd();
     requestAnimationFrame(this.render);
   }
 
@@ -72,34 +73,34 @@ export class CanvasTextEditor implements IRenderable {
     this.paragraphs = [
       new Paragraph(
         [
-          new Char('W', this.ctx, {color: 'red', fontSize: 80}),
-          new Char('o', this.ctx, {color: 'orange', fontSize: 80}),
-          new Char('r', this.ctx, {color: 'yellow', fontSize: 80}),
-          new Char('k', this.ctx, {color: 'green', fontSize: 80}),
-          new Char('e', this.ctx, {color: 'lightblue', fontSize: 80}),
-          new Char('r', this.ctx, {color: 'blue', fontSize: 80}),
-          new Char('s', this.ctx, {color: 'purple', fontSize: 40}),
-          new Char(' ', this.ctx),
-          new Char('o', this.ctx, {color: 'orange', fontSize: 40}),
-          new Char('f', this.ctx, {color: 'yellow', fontSize: 40}),
-          new Char(' ', this.ctx),
-          new Char('t', this.ctx, {color: 'lightblue', fontSize: 40}),
-          new Char('h', this.ctx, {color: 'blue', fontSize: 40}),
-          new Char('e', this.ctx, {color: 'purple', fontSize: 40}),
-          new Char(' ', this.ctx),
-          new Char('w', this.ctx, {color: 'orange', fontSize: 80}),
-          new Char('o', this.ctx, {color: 'yellow', fontSize: 80}),
-          new Char('r', this.ctx, {color: 'green', fontSize: 80}),
-          new Char('l', this.ctx, {color: 'lightblue', fontSize: 80}),
-          new Char('d', this.ctx, {color: 'blue', fontSize: 80}),
-          new Char(',', this.ctx, {color: 'purple', fontSize: 80}),
-          new Char(' ', this.ctx),
-          new Char('u', this.ctx, {color: 'orange', fontSize: 80}),
-          new Char('n', this.ctx, {color: 'yellow', fontSize: 80}),
-          new Char('i', this.ctx, {color: 'green', fontSize: 80}),
-          new Char('t', this.ctx, {color: 'lightblue', fontSize: 80}),
-          new Char('e', this.ctx, {color: 'blue', fontSize: 80}),
-          new Char('!', this.ctx, {color: 'purple', fontSize: 80}),
+          new Char('W', this.ctx, this.blinkingCursor, {color: 'red', fontSize: 80}),
+          new Char('o', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 80}),
+          new Char('r', this.ctx, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
+          new Char('k', this.ctx, this.blinkingCursor, {color: 'green', fontSize: 80}),
+          new Char('e', this.ctx, this.blinkingCursor, {color: 'lightblue', fontSize: 80}),
+          new Char('r', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 80}),
+          new Char('s', this.ctx, this.blinkingCursor, {color: 'purple', fontSize: 40}),
+          new Char(' ', this.ctx, this.blinkingCursor),
+          new Char('o', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 40}),
+          new Char('f', this.ctx, this.blinkingCursor, {color: 'yellow', fontSize: 40}),
+          new Char(' ', this.ctx, this.blinkingCursor),
+          new Char('t', this.ctx, this.blinkingCursor, {color: 'lightblue', fontSize: 40}),
+          new Char('h', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 40}),
+          new Char('e', this.ctx, this.blinkingCursor, {color: 'purple', fontSize: 40}),
+          new Char(' ', this.ctx, this.blinkingCursor),
+          new Char('w', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 80}),
+          new Char('o', this.ctx, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
+          new Char('r', this.ctx, this.blinkingCursor, {color: 'green', fontSize: 80}),
+          new Char('l', this.ctx, this.blinkingCursor, {color: 'lightblue', fontSize: 80}),
+          new Char('d', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 80}),
+          new Char(',', this.ctx, this.blinkingCursor, {color: 'purple', fontSize: 80}),
+          new Char(' ', this.ctx, this.blinkingCursor),
+          new Char('u', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 80}),
+          new Char('n', this.ctx, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
+          new Char('i', this.ctx, this.blinkingCursor, {color: 'green', fontSize: 80}),
+          new Char('t', this.ctx, this.blinkingCursor, {color: 'lightblue', fontSize: 80}),
+          new Char('e', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 80}),
+          new Char('!', this.ctx, this.blinkingCursor, {color: 'purple', fontSize: 80}),
         ],
         this.ctx,
         this.left + this.paddingLeft,
@@ -136,8 +137,8 @@ export class CanvasTextEditor implements IRenderable {
     ];
   }
 
-  private createBlinkingCursor() {
-    const blinkingCursor = new BlinkingCursor(this.ctx);
+  private moveBlinkingCursorToEnd() {
+    const blinkingCursor = this.blinkingCursor;
     if (this.paragraphs.length > 0) {
       const lastParagraph = this.paragraphs[this.paragraphs.length - 1];
       const lastChar = lastParagraph.chars[lastParagraph.chars.length - 1];
@@ -149,6 +150,5 @@ export class CanvasTextEditor implements IRenderable {
       blinkingCursor.top = this.top;
     }
     blinkingCursor.show();
-    return blinkingCursor;
   }
 }

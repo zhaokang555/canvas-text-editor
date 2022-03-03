@@ -10,8 +10,6 @@ export class ResponsiveToMouseHover implements IBoundingBox, IRenderable {
   public static topLayerZIndex = -Infinity;
   public static topLayerCursorType = CursorType.defaultCursor;
   public zIndex = 0;
-  private mouseX = -1;
-  private mouseY = -1;
   private isMouseHovering = false;
 
   constructor(
@@ -48,12 +46,12 @@ export class ResponsiveToMouseHover implements IBoundingBox, IRenderable {
 
   private handleMouseMove = (evt: MouseEvent) => {
     const rect = this.ctx.canvas.getBoundingClientRect();
-    this.mouseX = evt.clientX - rect.left;
-    this.mouseY = evt.clientY - rect.top;
+    const mouseX = evt.clientX - rect.left;
+    const mouseY = evt.clientY - rect.top;
 
-    this.isMouseHovering = (this.mouseX >= this.left) &&
-      (this.mouseY >= this.top) &&
-      (this.mouseX <= this.left + this.width) &&
-      (this.mouseY <= this.top + this.height);
+    this.isMouseHovering = (mouseX >= this.left) &&
+      (mouseY >= this.top) &&
+      (mouseX <= this.left + this.width) &&
+      (mouseY <= this.top + this.height);
   };
 }
