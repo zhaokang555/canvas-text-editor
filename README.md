@@ -20,4 +20,6 @@ Then open `http://localhost:3000/canvas-text-editor/`.
 
 ## Associated Blogs / 关联博客
 
-[《从零开始, 开发一个 Web Office 套件》系列博客目录](https://www.cnblogs.com/forzhaokang/p/15907371.html)
+博客园：[《从零开始, 开发一个 Web Office 套件》系列博客目录](https://www.cnblogs.com/forzhaokang/p/15907371.html)
+
+知乎专栏：[《从零开始, 开发一个 Web Office 套件》](https://www.zhihu.com/column/c_1483016910866931712)
