@@ -1,6 +1,14 @@
 import { IBoundingBox } from './IBoundingBox';
 
+interface IOptions {
+  zIndex?: number;
+}
+
 export default class ClickZone implements IBoundingBox {
+  public static topLayerZIndex = -Infinity;
+  public static topLayerCallbacks: Array<() => void> = [];
+  public zIndex = 0;
+
   constructor(
     public left: number,
     public top: number,
@@ -8,7 +16,10 @@ export default class ClickZone implements IBoundingBox {
     public height: number,
     public onClick: () => void,
     protected ctx: CanvasRenderingContext2D,
+    options: IOptions = {},
   ) {
+    // @ts-ignore
+    Object.entries(options).forEach(([key, value]) => this[key] = value);
     ctx.canvas.addEventListener('click', this.handleClick);
   }
 
@@ -28,7 +39,11 @@ export default class ClickZone implements IBoundingBox {
       (mouseY <= this.top + this.height);
 
     if (isClickOnMe) {
-      this.onClick();
+      if (this.zIndex > ClickZone.topLayerZIndex) {
+        ClickZone.topLayerCallbacks = [this.onClick];
+      } else if (this.zIndex === ClickZone.topLayerZIndex) {
+        ClickZone.topLayerCallbacks.push(this.onClick);
+      }
     }
   };
 }

@@ -35,8 +35,8 @@ export default class CanvasTextEditorChar implements IRenderable {
     const height = this.textMetrics.fontBoundingBoxDescent + this.textMetrics.fontBoundingBoxAscent;
 
     this.boundingBox = new ResponsiveToMouseHover(-Infinity, -Infinity, width, height, CursorType.text, ctx, {zIndex: defaultZIndex});
-    this.leftClickZone = new ClickZone(-Infinity, -Infinity, width / 2, height, this.handleClickLeft, ctx);
-    this.rightClickZone = new ClickZone(-Infinity, -Infinity, width / 2, height, this.handleClickRight, ctx);
+    this.leftClickZone = new ClickZone(-Infinity, -Infinity, width / 2, height, this.handleClickLeft, ctx, {zIndex: defaultZIndex});
+    this.rightClickZone = new ClickZone(-Infinity, -Infinity, width / 2, height, this.handleClickRight, ctx, {zIndex: defaultZIndex});
   }
 
   get left() {

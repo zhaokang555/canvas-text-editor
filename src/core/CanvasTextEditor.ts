@@ -7,6 +7,7 @@ import { ResponsiveToMouseHover } from './ResponsiveToMouseHover';
 import Border from './CanvasTextEditorBorder';
 import Victor from 'victor';
 import BlinkingCursor from './BlinkingCursor';
+import ClickZone from './ClickZone';
 
 const {defaultCursor, ewResize, nsResize, neswResize, nwseResize} = CursorType;
 
@@ -60,6 +61,8 @@ export class CanvasTextEditor implements IRenderable {
     this.sizeControlPoints.forEach(point => point.render());
     this.blinkingCursor.render();
     this.canvas.style.cursor = ResponsiveToMouseHover.topLayerCursorType;
+    ClickZone.topLayerCallbacks.forEach(cb => cb());
+    ClickZone.topLayerCallbacks = [];
   };
 
   clearCanvas = () => {
