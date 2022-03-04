@@ -4,12 +4,12 @@ export default class CanvasTextEditorSoftLine {
   private offsetY: number;
 
   constructor(
-    private chars: Char[],
+    public chars: Char[],
     public width: number,
     public height: number,
     private ctx: CanvasRenderingContext2D,
-    private left: number,
-    private top: number
+    public left: number,
+    public top: number
   ) {
     this.offsetY = Math.max(...this.chars.map(char => char.textMetrics.fontBoundingBoxAscent));
     this.calcLayoutForChars();

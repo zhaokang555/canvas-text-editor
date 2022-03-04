@@ -14,7 +14,7 @@ export default class ClickZone implements IBoundingBox {
     public top: number,
     public width: number,
     public height: number,
-    public onClick: () => void,
+    public onClick: (mouseX: number, mouseY: number) => void,
     protected ctx: CanvasRenderingContext2D,
     options: IOptions = {},
   ) {
@@ -40,9 +40,9 @@ export default class ClickZone implements IBoundingBox {
 
     if (isClickOnMe) {
       if (this.zIndex > ClickZone.topLayerZIndex) {
-        ClickZone.topLayerCallbacks = [this.onClick];
+        ClickZone.topLayerCallbacks = [() => this.onClick(mouseX, mouseY)];
       } else if (this.zIndex === ClickZone.topLayerZIndex) {
-        ClickZone.topLayerCallbacks.push(this.onClick);
+        ClickZone.topLayerCallbacks.push(() => this.onClick(mouseX, mouseY));
       }
     }
   };

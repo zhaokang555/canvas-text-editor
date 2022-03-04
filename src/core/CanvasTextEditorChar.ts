@@ -87,7 +87,7 @@ export default class CanvasTextEditorChar implements IRenderable {
     this.ctx.font = `${this.fontSize}px sans-serif`;
   }
 
-  private handleClickLeft = () => {
+  public handleClickLeft = () => {
     if (this.prev) {
       this.blinkingCursor.left = this.prev.rightClickZone.left + this.prev.rightClickZone.width;
       this.blinkingCursor.top = this.prev.rightClickZone.top;
@@ -100,7 +100,7 @@ export default class CanvasTextEditorChar implements IRenderable {
     this.blinkingCursor.show();
   };
 
-  private handleClickRight = () => {
+  public handleClickRight = () => {
     this.blinkingCursor.left = this.rightClickZone.left + this.rightClickZone.width;
     this.blinkingCursor.top = this.rightClickZone.top;
     this.blinkingCursor.height = this.fontSize;

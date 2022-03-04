@@ -8,6 +8,7 @@ import Border from './CanvasTextEditorBorder';
 import Victor from 'victor';
 import BlinkingCursor from './BlinkingCursor';
 import ClickZone from './ClickZone';
+import SoftLine from './CanvasTextEditorSoftLine';
 
 const {defaultCursor, ewResize, nsResize, neswResize, nwseResize} = CursorType;
 
@@ -33,12 +34,14 @@ export class CanvasTextEditor implements IRenderable {
   private sizeControlPoints: SizeControlPoint[] = [];
   private borders: Border[] = [];
   private blinkingCursor: BlinkingCursor;
+  private blankSpace: ClickZone;
 
   constructor(canvas: HTMLCanvasElement, options: IOptions = {}) {
     // @ts-ignore
     Object.entries(options).forEach(([key, value]) => this[key] = value);
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
+    this.blankSpace = new ClickZone(this.left, this.top, this.width, this.height, this.handleClickOnTheBlankSpace, this.ctx);
     this.blinkingCursor = new BlinkingCursor(this.ctx);
     this.initParagraphs();
     this.initBorder();
@@ -76,12 +79,12 @@ export class CanvasTextEditor implements IRenderable {
     this.paragraphs = [
       new Paragraph(
         [
-          new Char('W', this.ctx, this.blinkingCursor, {color: 'red', fontSize: 80}),
-          new Char('o', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 80}),
-          new Char('r', this.ctx, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
-          new Char('k', this.ctx, this.blinkingCursor, {color: 'green', fontSize: 80}),
-          new Char('e', this.ctx, this.blinkingCursor, {color: 'lightblue', fontSize: 80}),
-          new Char('r', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 80}),
+          new Char('W', this.ctx, this.blinkingCursor, {color: 'red', fontSize: 60}),
+          new Char('o', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 60}),
+          new Char('r', this.ctx, this.blinkingCursor, {color: 'yellow', fontSize: 60}),
+          new Char('k', this.ctx, this.blinkingCursor, {color: 'green', fontSize: 60}),
+          new Char('e', this.ctx, this.blinkingCursor, {color: 'lightblue', fontSize: 60}),
+          new Char('r', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 60}),
           new Char('s', this.ctx, this.blinkingCursor, {color: 'purple', fontSize: 40}),
           new Char(' ', this.ctx, this.blinkingCursor),
           new Char('o', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 40}),
@@ -91,19 +94,19 @@ export class CanvasTextEditor implements IRenderable {
           new Char('h', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 40}),
           new Char('e', this.ctx, this.blinkingCursor, {color: 'purple', fontSize: 40}),
           new Char(' ', this.ctx, this.blinkingCursor),
-          new Char('w', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 80}),
-          new Char('o', this.ctx, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
-          new Char('r', this.ctx, this.blinkingCursor, {color: 'green', fontSize: 80}),
-          new Char('l', this.ctx, this.blinkingCursor, {color: 'lightblue', fontSize: 80}),
-          new Char('d', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 80}),
-          new Char(',', this.ctx, this.blinkingCursor, {color: 'purple', fontSize: 80}),
+          new Char('w', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 60}),
+          new Char('o', this.ctx, this.blinkingCursor, {color: 'yellow', fontSize: 60}),
+          new Char('r', this.ctx, this.blinkingCursor, {color: 'green', fontSize: 60}),
+          new Char('l', this.ctx, this.blinkingCursor, {color: 'lightblue', fontSize: 60}),
+          new Char('d', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 60}),
+          new Char(',', this.ctx, this.blinkingCursor, {color: 'purple', fontSize: 60}),
           new Char(' ', this.ctx, this.blinkingCursor),
-          new Char('u', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 80}),
-          new Char('n', this.ctx, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
-          new Char('i', this.ctx, this.blinkingCursor, {color: 'green', fontSize: 80}),
-          new Char('t', this.ctx, this.blinkingCursor, {color: 'lightblue', fontSize: 80}),
-          new Char('e', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 80}),
-          new Char('!', this.ctx, this.blinkingCursor, {color: 'purple', fontSize: 80}),
+          new Char('u', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 60}),
+          new Char('n', this.ctx, this.blinkingCursor, {color: 'yellow', fontSize: 60}),
+          new Char('i', this.ctx, this.blinkingCursor, {color: 'green', fontSize: 60}),
+          new Char('t', this.ctx, this.blinkingCursor, {color: 'lightblue', fontSize: 60}),
+          new Char('e', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 60}),
+          new Char('!', this.ctx, this.blinkingCursor, {color: 'purple', fontSize: 60}),
         ],
         this.ctx,
         this.left + this.paddingLeft,
@@ -154,4 +157,47 @@ export class CanvasTextEditor implements IRenderable {
     }
     blinkingCursor.show();
   }
+
+  private handleClickOnTheBlankSpace = (mouseX: number, mouseY: number) => {
+    // 1. 找到距离点击位置最近的行
+    let nearestSoftLine: SoftLine | null = null;
+    let nearestVerticalDistance = Infinity;
+
+    for (let p of this.paragraphs) {
+      for (let softLine of p.softLines) {
+        const curLineVerticalDistance = mouseY - softLine.top;
+        if (nearestSoftLine == null) {
+          nearestSoftLine = softLine;
+          nearestVerticalDistance = curLineVerticalDistance;
+        } else if (curLineVerticalDistance >= 0 && curLineVerticalDistance < nearestVerticalDistance) {
+          nearestSoftLine = softLine;
+          nearestVerticalDistance = curLineVerticalDistance;
+        }
+      }
+    }
+
+    if (nearestSoftLine == null) return;
+
+    // 2. 在此行内找到距离点击位置最近的字符
+    if (mouseX <= nearestSoftLine.chars[0].left) {
+      nearestSoftLine.chars[0].handleClickLeft();
+      return;
+    }
+    let nearestChar: Char = nearestSoftLine.chars[0];
+    let nearestHorizontalDistance = mouseX - nearestChar.left;
+    for (let char of nearestSoftLine.chars) {
+      const curCharHorizontalDistance = mouseX - char.left;
+      if (curCharHorizontalDistance >= 0 && curCharHorizontalDistance < nearestHorizontalDistance) {
+        nearestChar = char;
+        nearestHorizontalDistance = curCharHorizontalDistance;
+      }
+    }
+
+    // 3. 在此字符的左侧或者右侧插入光标
+    if (nearestHorizontalDistance <= nearestChar.width / 2) {
+      nearestChar.handleClickLeft();
+    } else {
+      nearestChar.handleClickRight();
+    }
+  };
 }
