@@ -179,7 +179,7 @@ export class CanvasTextEditor implements IRenderable {
     if (nearestSoftLine == null) return;
 
     // 2. 在此行内找到距离点击位置最近的字符
-    if (mouseX <= nearestSoftLine.chars[0].left) {
+    if (mouseX <= nearestSoftLine.chars[0].left) { // handle click on paddingLeft
       nearestSoftLine.chars[0].handleClickLeft();
       return;
     }

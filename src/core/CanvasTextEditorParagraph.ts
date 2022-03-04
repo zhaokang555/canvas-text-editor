@@ -15,9 +15,6 @@ export default class CanvasTextEditorParagraph {
   ) {
     this.calcLayoutForSoftLines();
     this.calcLayout();
-    this.chars.forEach((char, i) => {
-      char.prev = this.chars[i - 1] || null;
-    });
   }
 
   destructor() {
