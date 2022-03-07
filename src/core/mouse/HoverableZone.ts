@@ -1,4 +1,4 @@
-import { CursorType } from '../CursorType';
+import CursorType from '../CursorType';
 import { IBoundingBox } from '../IBoundingBox';
 import IRenderable from '../IRenderable';
 

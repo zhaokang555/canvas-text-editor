@@ -1,4 +1,4 @@
-import { CursorType } from './CursorType';
+import CursorType from './CursorType';
 import { IHoverableZoneOptions, HoverableZone } from './mouse/HoverableZone';
 
 const radius = 5;

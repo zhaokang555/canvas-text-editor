@@ -2,7 +2,7 @@ import Paragraph from './CanvasTextEditorParagraph';
 import Char from './CanvasTextEditorChar';
 import IRenderable from './IRenderable';
 import { SizeControlPoint } from './SizeControlPoint';
-import { CursorType } from './CursorType';
+import CursorType from './CursorType';
 import { HoverableZone } from './mouse/HoverableZone';
 import Border from './CanvasTextEditorBorder';
 import Victor from 'victor';

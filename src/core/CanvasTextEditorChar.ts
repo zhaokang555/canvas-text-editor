@@ -1,6 +1,6 @@
 import IRenderable from './IRenderable';
 import { HoverableZone } from './mouse/HoverableZone';
-import { CursorType } from './CursorType';
+import CursorType from './CursorType';
 import ClickableZone from './mouse/ClickableZone';
 import BlinkingCursor from './BlinkingCursor';
 

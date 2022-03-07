@@ -1,6 +1,6 @@
 import Victor from 'victor';
 import { HoverableZone } from './mouse/HoverableZone';
-import { CursorType } from './CursorType';
+import CursorType from './CursorType';
 
 const borderColor = '#999';
 const borderWidth = 1;

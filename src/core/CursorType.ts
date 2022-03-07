@@ -1,4 +1,4 @@
-export enum CursorType {
+enum CursorType {
   defaultCursor = 'default',
   ewResize = 'ew-resize',
   nsResize = 'ns-resize',
@@ -7,3 +7,5 @@ export enum CursorType {
   move = 'move',
   text = 'text',
 }
+
+export default CursorType;
