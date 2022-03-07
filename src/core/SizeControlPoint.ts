@@ -1,10 +1,10 @@
 import { CursorType } from './CursorType';
-import { IResponsiveToMouseHoverOptions, ResponsiveToMouseHover } from './ResponsiveToMouseHover';
+import { IHoverableZoneOptions, HoverableZone } from './mouse/HoverableZone';
 
 const radius = 5;
 const defaultZIndex = 1000;
 
-export class SizeControlPoint extends ResponsiveToMouseHover {
+export class SizeControlPoint extends HoverableZone {
   borderColor = '#999';
   backgroundColor = '#fff';
 
@@ -13,7 +13,7 @@ export class SizeControlPoint extends ResponsiveToMouseHover {
     private centerY: number,
     public cursorType: CursorType,
     ctx: CanvasRenderingContext2D,
-    options: IResponsiveToMouseHoverOptions = {},
+    options: IHoverableZoneOptions = {},
   ) {
     const left = centerX - radius;
     const top = centerY - radius;

@@ -1,5 +1,5 @@
 import Victor from 'victor';
-import { ResponsiveToMouseHover } from './ResponsiveToMouseHover';
+import { HoverableZone } from './mouse/HoverableZone';
 import { CursorType } from './CursorType';
 
 const borderColor = '#999';
@@ -7,7 +7,7 @@ const borderWidth = 1;
 const borderResponsiveWidth = 10;
 const defaultZIndex = 100;
 
-export default class CanvasTextEditorBorder extends ResponsiveToMouseHover {
+export default class CanvasTextEditorBorder extends HoverableZone {
   constructor(
     public from: Victor,
     public to: Victor,

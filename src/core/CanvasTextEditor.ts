@@ -3,7 +3,7 @@ import Char from './CanvasTextEditorChar';
 import IRenderable from './IRenderable';
 import { SizeControlPoint } from './SizeControlPoint';
 import { CursorType } from './CursorType';
-import { ResponsiveToMouseHover } from './ResponsiveToMouseHover';
+import { HoverableZone } from './mouse/HoverableZone';
 import Border from './CanvasTextEditorBorder';
 import Victor from 'victor';
 import BlinkingCursor from './BlinkingCursor';
@@ -63,7 +63,7 @@ export class CanvasTextEditor implements IRenderable {
     this.borders.forEach(border => border.render());
     this.sizeControlPoints.forEach(point => point.render());
     this.blinkingCursor.render();
-    this.canvas.style.cursor = ResponsiveToMouseHover.topLayerCursorType;
+    this.canvas.style.cursor = HoverableZone.topLayerCursorType;
     ClickZone.topLayerCallbacks.forEach(cb => cb());
     ClickZone.topLayerCallbacks = [];
     ClickZone.topLayerZIndex = -Infinity;
@@ -72,8 +72,8 @@ export class CanvasTextEditor implements IRenderable {
   clearCanvas = () => {
     this.ctx.fillStyle = this.backgroundColor;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    ResponsiveToMouseHover.topLayerZIndex = -Infinity;
-    ResponsiveToMouseHover.topLayerCursorType = defaultCursor;
+    HoverableZone.topLayerZIndex = -Infinity;
+    HoverableZone.topLayerCursorType = defaultCursor;
   };
 
   private initParagraphs() {

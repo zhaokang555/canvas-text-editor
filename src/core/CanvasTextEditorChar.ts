@@ -1,5 +1,5 @@
 import IRenderable from './IRenderable';
-import { ResponsiveToMouseHover } from './ResponsiveToMouseHover';
+import { HoverableZone } from './mouse/HoverableZone';
 import { CursorType } from './CursorType';
 import ClickZone from './ClickZone';
 import BlinkingCursor from './BlinkingCursor';
@@ -16,7 +16,7 @@ export default class CanvasTextEditorChar implements IRenderable {
   top = 0;
   color = '#000';
   fontSize = 50;
-  boundingBox: ResponsiveToMouseHover;
+  boundingBox: HoverableZone;
   leftClickZone: ClickZone;
   rightClickZone: ClickZone;
   prev: CanvasTextEditorChar | null = null;
@@ -34,7 +34,7 @@ export default class CanvasTextEditorChar implements IRenderable {
     const width = this.textMetrics.width;
     const height = this.textMetrics.fontBoundingBoxDescent + this.textMetrics.fontBoundingBoxAscent;
 
-    this.boundingBox = new ResponsiveToMouseHover(-Infinity, -Infinity, width, height, CursorType.text, ctx, {zIndex: defaultZIndex});
+    this.boundingBox = new HoverableZone(-Infinity, -Infinity, width, height, CursorType.text, ctx, {zIndex: defaultZIndex});
     this.leftClickZone = new ClickZone(-Infinity, -Infinity, width / 2, height, this.handleClickLeft, ctx, {zIndex: defaultZIndex});
     this.rightClickZone = new ClickZone(-Infinity, -Infinity, width / 2, height, this.handleClickRight, ctx, {zIndex: defaultZIndex});
   }

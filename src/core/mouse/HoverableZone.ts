@@ -1,12 +1,12 @@
-import { CursorType } from './CursorType';
-import { IBoundingBox } from './IBoundingBox';
-import IRenderable from './IRenderable';
+import { CursorType } from '../CursorType';
+import { IBoundingBox } from '../IBoundingBox';
+import IRenderable from '../IRenderable';
 
-export interface IResponsiveToMouseHoverOptions {
+export interface IHoverableZoneOptions {
   zIndex?: number;
 }
 
-export class ResponsiveToMouseHover implements IBoundingBox, IRenderable {
+export class HoverableZone implements IBoundingBox, IRenderable {
   public static topLayerZIndex = -Infinity;
   public static topLayerCursorType = CursorType.defaultCursor;
   public zIndex = 0;
@@ -19,7 +19,7 @@ export class ResponsiveToMouseHover implements IBoundingBox, IRenderable {
     public height: number,
     public cursorType: CursorType,
     protected ctx: CanvasRenderingContext2D,
-    options: IResponsiveToMouseHoverOptions = {},
+    options: IHoverableZoneOptions = {},
   ) {
     // @ts-ignore
     Object.entries(options).forEach(([key, value]) => this[key] = value);
@@ -32,9 +32,9 @@ export class ResponsiveToMouseHover implements IBoundingBox, IRenderable {
 
   render() {
     if (this.isMouseHovering) {
-      if (this.zIndex >= ResponsiveToMouseHover.topLayerZIndex) {
-        ResponsiveToMouseHover.topLayerZIndex = this.zIndex;
-        ResponsiveToMouseHover.topLayerCursorType = this.cursorType;
+      if (this.zIndex >= HoverableZone.topLayerZIndex) {
+        HoverableZone.topLayerZIndex = this.zIndex;
+        HoverableZone.topLayerCursorType = this.cursorType;
 
         // this.ctx.strokeStyle = 'red';
         // this.ctx.strokeRect(this.left, this.top, this.width, this.height);
