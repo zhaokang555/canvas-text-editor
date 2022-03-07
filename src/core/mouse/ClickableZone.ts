@@ -1,10 +1,10 @@
-import { IBoundingBox } from './IBoundingBox';
+import { IBoundingBox } from '../IBoundingBox';
 
 interface IOptions {
   zIndex?: number;
 }
 
-export default class ClickZone implements IBoundingBox {
+export default class ClickableZone implements IBoundingBox {
   public static topLayerZIndex = -Infinity;
   public static topLayerCallbacks: Array<() => void> = [];
   public zIndex = 0;
@@ -39,11 +39,11 @@ export default class ClickZone implements IBoundingBox {
       (mouseY <= this.top + this.height);
 
     if (isClickOnMe) {
-      if (this.zIndex > ClickZone.topLayerZIndex) {
-        ClickZone.topLayerCallbacks = [() => this.onClick(mouseX, mouseY)];
-        ClickZone.topLayerZIndex = this.zIndex;
-      } else if (this.zIndex === ClickZone.topLayerZIndex) {
-        ClickZone.topLayerCallbacks.push(() => this.onClick(mouseX, mouseY));
+      if (this.zIndex > ClickableZone.topLayerZIndex) {
+        ClickableZone.topLayerCallbacks = [() => this.onClick(mouseX, mouseY)];
+        ClickableZone.topLayerZIndex = this.zIndex;
+      } else if (this.zIndex === ClickableZone.topLayerZIndex) {
+        ClickableZone.topLayerCallbacks.push(() => this.onClick(mouseX, mouseY));
       }
     }
   };

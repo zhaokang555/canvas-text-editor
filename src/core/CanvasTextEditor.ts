@@ -7,7 +7,7 @@ import { HoverableZone } from './mouse/HoverableZone';
 import Border from './CanvasTextEditorBorder';
 import Victor from 'victor';
 import BlinkingCursor from './BlinkingCursor';
-import ClickZone from './ClickZone';
+import ClickableZone from './mouse/ClickableZone';
 import SoftLine from './CanvasTextEditorSoftLine';
 
 const {defaultCursor, ewResize, nsResize, neswResize, nwseResize} = CursorType;
@@ -34,14 +34,14 @@ export class CanvasTextEditor implements IRenderable {
   private sizeControlPoints: SizeControlPoint[] = [];
   private borders: Border[] = [];
   private blinkingCursor: BlinkingCursor;
-  private blankSpace: ClickZone;
+  private blankSpace: ClickableZone;
 
   constructor(canvas: HTMLCanvasElement, options: IOptions = {}) {
     // @ts-ignore
     Object.entries(options).forEach(([key, value]) => this[key] = value);
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
-    this.blankSpace = new ClickZone(this.left, this.top, this.width, this.height, this.handleClickOnTheBlankSpace, this.ctx);
+    this.blankSpace = new ClickableZone(this.left, this.top, this.width, this.height, this.handleClickOnTheBlankSpace, this.ctx);
     this.blinkingCursor = new BlinkingCursor(this.ctx);
     this.initParagraphs();
     this.initBorder();
@@ -64,9 +64,9 @@ export class CanvasTextEditor implements IRenderable {
     this.sizeControlPoints.forEach(point => point.render());
     this.blinkingCursor.render();
     this.canvas.style.cursor = HoverableZone.topLayerCursorType;
-    ClickZone.topLayerCallbacks.forEach(cb => cb());
-    ClickZone.topLayerCallbacks = [];
-    ClickZone.topLayerZIndex = -Infinity;
+    ClickableZone.topLayerCallbacks.forEach(cb => cb());
+    ClickableZone.topLayerCallbacks = [];
+    ClickableZone.topLayerZIndex = -Infinity;
   };
 
   clearCanvas = () => {
