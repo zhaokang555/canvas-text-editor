@@ -41,6 +41,7 @@ export default class ClickZone implements IBoundingBox {
     if (isClickOnMe) {
       if (this.zIndex > ClickZone.topLayerZIndex) {
         ClickZone.topLayerCallbacks = [() => this.onClick(mouseX, mouseY)];
+        ClickZone.topLayerZIndex = this.zIndex;
       } else if (this.zIndex === ClickZone.topLayerZIndex) {
         ClickZone.topLayerCallbacks.push(() => this.onClick(mouseX, mouseY));
       }

@@ -66,6 +66,7 @@ export class CanvasTextEditor implements IRenderable {
     this.canvas.style.cursor = ResponsiveToMouseHover.topLayerCursorType;
     ClickZone.topLayerCallbacks.forEach(cb => cb());
     ClickZone.topLayerCallbacks = [];
+    ClickZone.topLayerZIndex = -Infinity;
   };
 
   clearCanvas = () => {
