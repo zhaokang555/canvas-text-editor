@@ -3,6 +3,7 @@ import { HoverableZone } from './mouse/HoverableZone';
 import CursorType from './CursorType';
 import ClickableZone from './mouse/ClickableZone';
 import BlinkingCursor from './BlinkingCursor';
+import SelectableZone from './mouse/SelectableZone';
 
 const defaultZIndex = 10;
 
@@ -16,10 +17,11 @@ export default class CanvasTextEditorChar implements IRenderable {
   top = 0;
   color = '#000';
   fontSize = 50;
+  prev: CanvasTextEditorChar | null = null;
   boundingBox: HoverableZone;
   leftClickableZone: ClickableZone;
   rightClickableZone: ClickableZone;
-  prev: CanvasTextEditorChar | null = null;
+  selectableZone: SelectableZone;
 
   constructor(
     private char: string,
@@ -37,6 +39,7 @@ export default class CanvasTextEditorChar implements IRenderable {
     this.boundingBox = new HoverableZone(-Infinity, -Infinity, width, height, CursorType.text, ctx, {zIndex: defaultZIndex});
     this.leftClickableZone = new ClickableZone(-Infinity, -Infinity, width / 2, height, this.handleClickLeft, ctx, {zIndex: defaultZIndex});
     this.rightClickableZone = new ClickableZone(-Infinity, -Infinity, width / 2, height, this.handleClickRight, ctx, {zIndex: defaultZIndex});
+    this.selectableZone = new SelectableZone(-Infinity, -Infinity, width, height, ctx);
   }
 
   get left() {
@@ -73,10 +76,14 @@ export default class CanvasTextEditorChar implements IRenderable {
 
     this.rightClickableZone.left = left + this.width / 2;
     this.rightClickableZone.top = boundingBoxTop;
+
+    this.selectableZone.left = left;
+    this.selectableZone.top = boundingBoxTop;
   };
 
   render = () => {
     this.boundingBox.render();
+    this.selectableZone.render();
 
     this.setStyle();
     this.ctx.fillText(this.char, this.left, this.top);
