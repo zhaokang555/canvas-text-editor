@@ -1,6 +1,7 @@
 import Victor from 'victor';
 import { HoverableZone } from './mouse/HoverableZone';
 import CursorType from './CursorType';
+import Store from './Store';
 
 const borderColor = '#999';
 const borderWidth = 1;
@@ -11,7 +12,7 @@ export default class CanvasTextEditorBorder extends HoverableZone {
   constructor(
     public from: Victor,
     public to: Victor,
-    ctx: CanvasRenderingContext2D,
+    store: Store,
   ) {
     const normalVector = to.clone().subtract(from).rotate(Math.PI / 2).normalize();
     const points = [
@@ -27,7 +28,7 @@ export default class CanvasTextEditorBorder extends HoverableZone {
     const width = right - left;
     const height = bottom - top;
 
-    super(left, top, width, height, CursorType.move, ctx, {
+    super(left, top, width, height, CursorType.move, store, {
       zIndex: defaultZIndex,
     });
   }
@@ -35,12 +36,12 @@ export default class CanvasTextEditorBorder extends HoverableZone {
   render() {
     super.render();
 
-    this.ctx.beginPath();
-    this.ctx.strokeStyle = borderColor;
-    this.ctx.lineWidth = borderWidth;
-    this.ctx.setLineDash([3]);
-    this.ctx.moveTo(this.from.x, this.from.y);
-    this.ctx.lineTo(this.to.x, this.to.y);
-    this.ctx.stroke();
+    this.store.ctx.beginPath();
+    this.store.ctx.strokeStyle = borderColor;
+    this.store.ctx.lineWidth = borderWidth;
+    this.store.ctx.setLineDash([3]);
+    this.store.ctx.moveTo(this.from.x, this.from.y);
+    this.store.ctx.lineTo(this.to.x, this.to.y);
+    this.store.ctx.stroke();
   }
 }

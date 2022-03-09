@@ -7,7 +7,6 @@ export default class CanvasTextEditorSoftLine {
     public chars: Char[],
     public width: number,
     public height: number,
-    private ctx: CanvasRenderingContext2D,
     public left: number,
     public top: number
   ) {

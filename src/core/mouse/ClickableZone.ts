@@ -1,4 +1,5 @@
 import { IBoundingBox } from '../IBoundingBox';
+import Store from '../Store';
 
 interface IOptions {
   zIndex?: number;
@@ -15,21 +16,21 @@ export default class ClickableZone implements IBoundingBox {
     public width: number,
     public height: number,
     public onClick: (mouseX: number, mouseY: number) => void,
-    protected ctx: CanvasRenderingContext2D,
+    protected store: Store,
     options: IOptions = {},
   ) {
     // @ts-ignore
     Object.entries(options).forEach(([key, value]) => this[key] = value);
-    ctx.canvas.addEventListener('click', this.handleClick);
+    this.store.ctx.canvas.addEventListener('click', this.handleClick);
   }
 
   destructor() {
-    this.ctx.canvas.removeEventListener('click', this.handleClick);
+    this.store.ctx.canvas.removeEventListener('click', this.handleClick);
   }
 
   private handleClick = (evt: MouseEvent) => {
 
-    const rect = this.ctx.canvas.getBoundingClientRect();
+    const rect = this.store.ctx.canvas.getBoundingClientRect();
     const mouseX = evt.clientX - rect.left;
     const mouseY = evt.clientY - rect.top;
 
@@ -39,11 +40,11 @@ export default class ClickableZone implements IBoundingBox {
       (mouseY <= this.top + this.height);
 
     if (isClickOnMe) {
-      if (this.zIndex > ClickableZone.topLayerZIndex) {
-        ClickableZone.topLayerCallbacks = [() => this.onClick(mouseX, mouseY)];
-        ClickableZone.topLayerZIndex = this.zIndex;
-      } else if (this.zIndex === ClickableZone.topLayerZIndex) {
-        ClickableZone.topLayerCallbacks.push(() => this.onClick(mouseX, mouseY));
+      if (this.zIndex > this.store.mouse.click.topLayerZIndex) {
+        this.store.mouse.click.topLayerCallbacks = [() => this.onClick(mouseX, mouseY)];
+        this.store.mouse.click.topLayerZIndex = this.zIndex;
+      } else if (this.zIndex === this.store.mouse.click.topLayerZIndex) {
+        this.store.mouse.click.topLayerCallbacks.push(() => this.onClick(mouseX, mouseY));
       }
     }
   };

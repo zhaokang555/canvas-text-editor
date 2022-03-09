@@ -5,6 +5,7 @@ import ClickableZone from './mouse/ClickableZone';
 import BlinkingCursor from './BlinkingCursor';
 import SelectableZone from './mouse/SelectableZone';
 import HalfChar from './CanvasTextEditorHalfChar';
+import Store from './Store';
 
 const defaultZIndex = 10;
 
@@ -26,21 +27,21 @@ export default class CanvasTextEditorChar implements IRenderable {
 
   constructor(
     private char: string,
-    private ctx: CanvasRenderingContext2D,
+    private store: Store,
     private blinkingCursor: BlinkingCursor,
     options: IOptions = {}
   ) {
     // @ts-ignore
     Object.entries(options).forEach(([key, value]) => this[key] = value);
     this.setStyle();
-    this.textMetrics = ctx.measureText(char);
+    this.textMetrics = store.ctx.measureText(char);
     const width = this.textMetrics.width;
     const height = this.textMetrics.fontBoundingBoxDescent + this.textMetrics.fontBoundingBoxAscent;
 
-    this.boundingBox = new HoverableZone(-Infinity, -Infinity, width, height, CursorType.text, ctx, {zIndex: defaultZIndex});
-    this.leftHalf = new HalfChar(new ClickableZone(-Infinity, -Infinity, width / 2, height, this.handleClickLeft, ctx, {zIndex: defaultZIndex}));
-    this.rightHalf = new HalfChar(new ClickableZone(-Infinity, -Infinity, width / 2, height, this.handleClickRight, ctx, {zIndex: defaultZIndex}));
-    this.selectableZone = new SelectableZone(-Infinity, -Infinity, width, height, ctx);
+    this.boundingBox = new HoverableZone(-Infinity, -Infinity, width, height, CursorType.text, store, {zIndex: defaultZIndex});
+    this.leftHalf = new HalfChar(new ClickableZone(-Infinity, -Infinity, width / 2, height, this.handleClickLeft, store, {zIndex: defaultZIndex}));
+    this.rightHalf = new HalfChar(new ClickableZone(-Infinity, -Infinity, width / 2, height, this.handleClickRight, store, {zIndex: defaultZIndex}));
+    this.selectableZone = new SelectableZone(-Infinity, -Infinity, width, height, store);
   }
 
   get left() {
@@ -87,12 +88,12 @@ export default class CanvasTextEditorChar implements IRenderable {
     this.selectableZone.render();
 
     this.setStyle();
-    this.ctx.fillText(this.char, this.left, this.top);
+    this.store.ctx.fillText(this.char, this.left, this.top);
   };
 
   private setStyle() {
-    this.ctx.fillStyle = this.color;
-    this.ctx.font = `${this.fontSize}px sans-serif`;
+    this.store.ctx.fillStyle = this.color;
+    this.store.ctx.font = `${this.fontSize}px sans-serif`;
   }
 
   public handleClickLeft = () => {

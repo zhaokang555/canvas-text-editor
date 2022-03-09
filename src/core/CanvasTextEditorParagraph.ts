@@ -1,5 +1,6 @@
 import Char from './CanvasTextEditorChar';
 import SoftLine from './CanvasTextEditorSoftLine';
+import Store from './Store';
 
 export default class CanvasTextEditorParagraph {
   softLines: SoftLine[] = [];
@@ -8,7 +9,7 @@ export default class CanvasTextEditorParagraph {
 
   constructor(
     public chars: Char[],
-    private ctx: CanvasRenderingContext2D,
+    private store: Store,
     private left: number,
     private top: number,
     private maxWidth: number,
@@ -38,7 +39,7 @@ export default class CanvasTextEditorParagraph {
           softLineWidth += char.width;
           softLineHeight = Math.max(softLineHeight, char.height);
         } else {
-          const softLine = new SoftLine(softLineChars, softLineWidth, softLineHeight, this.ctx, this.left, top);
+          const softLine = new SoftLine(softLineChars, softLineWidth, softLineHeight, this.left, top);
           this.softLines.push(softLine);
           top += softLineHeight;
 
@@ -51,7 +52,7 @@ export default class CanvasTextEditorParagraph {
 
     // 处理最后半行
     if (softLineChars.length > 0) {
-      const softLine = new SoftLine(softLineChars, softLineWidth, softLineHeight, this.ctx, this.left, top);
+      const softLine = new SoftLine(softLineChars, softLineWidth, softLineHeight, this.left, top);
       this.softLines.push(softLine);
     }
   };

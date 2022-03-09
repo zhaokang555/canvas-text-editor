@@ -1,5 +1,6 @@
 import CursorType from './CursorType';
 import { IHoverableZoneOptions, HoverableZone } from './mouse/HoverableZone';
+import Store from './Store';
 
 const radius = 5;
 const defaultZIndex = 1000;
@@ -12,14 +13,14 @@ export class SizeControlPoint extends HoverableZone {
     private centerX: number,
     private centerY: number,
     public cursorType: CursorType,
-    ctx: CanvasRenderingContext2D,
+    store: Store,
     options: IHoverableZoneOptions = {},
   ) {
     const left = centerX - radius;
     const top = centerY - radius;
     const width = 2 * radius;
     const height = 2 * radius;
-    super(left, top, width, height, cursorType, ctx, {
+    super(left, top, width, height, cursorType, store, {
       zIndex: defaultZIndex,
       ...options,
     });
@@ -28,14 +29,14 @@ export class SizeControlPoint extends HoverableZone {
   render = () => {
     super.render();
 
-    this.ctx.beginPath();
-    this.ctx.setLineDash([]);
-    this.ctx.arc(this.centerX, this.centerY, radius, 0, Math.PI * 2);
-    this.ctx.fillStyle = this.backgroundColor;
-    this.ctx.fill();
-    this.ctx.strokeStyle = this.borderColor;
-    this.ctx.stroke();
-    this.ctx.closePath();
+    this.store.ctx.beginPath();
+    this.store.ctx.setLineDash([]);
+    this.store.ctx.arc(this.centerX, this.centerY, radius, 0, Math.PI * 2);
+    this.store.ctx.fillStyle = this.backgroundColor;
+    this.store.ctx.fill();
+    this.store.ctx.strokeStyle = this.borderColor;
+    this.store.ctx.stroke();
+    this.store.ctx.closePath();
   };
 
 }

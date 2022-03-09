@@ -3,12 +3,12 @@ import Char from './CanvasTextEditorChar';
 import IRenderable from './IRenderable';
 import { SizeControlPoint } from './SizeControlPoint';
 import CursorType from './CursorType';
-import { HoverableZone } from './mouse/HoverableZone';
 import Border from './CanvasTextEditorBorder';
 import Victor from 'victor';
 import BlinkingCursor from './BlinkingCursor';
 import ClickableZone from './mouse/ClickableZone';
 import SoftLine from './CanvasTextEditorSoftLine';
+import Store from './Store';
 
 const {defaultCursor, ewResize, nsResize, neswResize, nwseResize} = CursorType;
 
@@ -23,7 +23,7 @@ interface IOptions {
 
 export class CanvasTextEditor implements IRenderable {
   canvas: HTMLCanvasElement;
-  ctx: CanvasRenderingContext2D;
+  store: Store;
   left = 0;
   top = 0;
   width = 400;
@@ -40,9 +40,10 @@ export class CanvasTextEditor implements IRenderable {
     // @ts-ignore
     Object.entries(options).forEach(([key, value]) => this[key] = value);
     this.canvas = canvas;
-    this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
-    this.blankSpace = new ClickableZone(this.left, this.top, this.width, this.height, this.handleClickOnTheBlankSpace, this.ctx);
-    this.blinkingCursor = new BlinkingCursor(this.ctx);
+    const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
+    this.store = new Store(ctx);
+    this.blankSpace = new ClickableZone(this.left, this.top, this.width, this.height, this.handleClickOnTheBlankSpace, this.store);
+    this.blinkingCursor = new BlinkingCursor(this.store);
     this.initParagraphs();
     this.initBorder();
     this.initSizeControlPoints();
@@ -63,53 +64,42 @@ export class CanvasTextEditor implements IRenderable {
     this.borders.forEach(border => border.render());
     this.sizeControlPoints.forEach(point => point.render());
     this.blinkingCursor.render();
-    this.canvas.style.cursor = HoverableZone.topLayerCursorType;
-    ClickableZone.topLayerCallbacks.forEach(cb => cb());
-    ClickableZone.topLayerCallbacks = [];
-    ClickableZone.topLayerZIndex = -Infinity;
+    this.canvas.style.cursor = this.store.mouse.hover.topLayerCursorType;
+    this.store.mouse.click.topLayerCallbacks.forEach(cb => cb());
+    this.store.mouse.click.topLayerCallbacks = [];
+    this.store.mouse.click.topLayerZIndex = -Infinity;
   };
 
   clearCanvas = () => {
-    this.ctx.fillStyle = this.backgroundColor;
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    HoverableZone.topLayerZIndex = -Infinity;
-    HoverableZone.topLayerCursorType = defaultCursor;
+    this.store.ctx.fillStyle = this.backgroundColor;
+    this.store.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.store.mouse.hover.topLayerZIndex = -Infinity;
+    this.store.mouse.hover.topLayerCursorType = defaultCursor;
   };
 
   private initParagraphs() {
     this.paragraphs = [
       new Paragraph(
         [
-          new Char('W', this.ctx, this.blinkingCursor, {color: 'red', fontSize: 60}),
-          new Char('o', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 60}),
-          new Char('r', this.ctx, this.blinkingCursor, {color: 'yellow', fontSize: 60}),
-          new Char('k', this.ctx, this.blinkingCursor, {color: 'green', fontSize: 60}),
-          new Char('e', this.ctx, this.blinkingCursor, {color: 'lightblue', fontSize: 60}),
-          new Char('r', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 60}),
-          new Char('s', this.ctx, this.blinkingCursor, {color: 'purple', fontSize: 40}),
-          new Char(' ', this.ctx, this.blinkingCursor),
-          new Char('o', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 40}),
-          new Char('f', this.ctx, this.blinkingCursor, {color: 'yellow', fontSize: 40}),
-          new Char(' ', this.ctx, this.blinkingCursor),
-          new Char('t', this.ctx, this.blinkingCursor, {color: 'lightblue', fontSize: 40}),
-          new Char('h', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 40}),
-          new Char('e', this.ctx, this.blinkingCursor, {color: 'purple', fontSize: 40}),
-          new Char(' ', this.ctx, this.blinkingCursor),
-          new Char('w', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 60}),
-          new Char('o', this.ctx, this.blinkingCursor, {color: 'yellow', fontSize: 60}),
-          new Char('r', this.ctx, this.blinkingCursor, {color: 'green', fontSize: 60}),
-          new Char('l', this.ctx, this.blinkingCursor, {color: 'lightblue', fontSize: 60}),
-          new Char('d', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 60}),
-          new Char(',', this.ctx, this.blinkingCursor, {color: 'purple', fontSize: 60}),
-          new Char(' ', this.ctx, this.blinkingCursor),
-          new Char('u', this.ctx, this.blinkingCursor, {color: 'orange', fontSize: 60}),
-          new Char('n', this.ctx, this.blinkingCursor, {color: 'yellow', fontSize: 60}),
-          new Char('i', this.ctx, this.blinkingCursor, {color: 'green', fontSize: 60}),
-          new Char('t', this.ctx, this.blinkingCursor, {color: 'lightblue', fontSize: 60}),
-          new Char('e', this.ctx, this.blinkingCursor, {color: 'blue', fontSize: 60}),
-          new Char('!', this.ctx, this.blinkingCursor, {color: 'purple', fontSize: 60}),
+          new Char('/', this.store, this.blinkingCursor, {color: 'red', fontSize: 80}),
+          new Char('t', this.store, this.blinkingCursor, {color: 'orange', fontSize: 80}),
+          new Char('h', this.store, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
+          new Char('o', this.store, this.blinkingCursor, {color: 'green', fontSize: 80}),
+          new Char('u', this.store, this.blinkingCursor, {color: 'lightblue', fontSize: 80}),
+          new Char('g', this.store, this.blinkingCursor, {color: 'blue', fontSize: 80}),
+          new Char('h', this.store, this.blinkingCursor, {color: 'purple', fontSize: 80}),
+          new Char('t', this.store, this.blinkingCursor, {color: 'red', fontSize: 80}),
+          new Char('w', this.store, this.blinkingCursor, {color: 'orange', fontSize: 80}),
+          new Char('o', this.store, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
+          new Char('r', this.store, this.blinkingCursor, {color: 'green', fontSize: 80}),
+          new Char('k', this.store, this.blinkingCursor, {color: 'lightblue', fontSize: 80}),
+          new Char('s', this.store, this.blinkingCursor, {color: 'blue', fontSize: 80}),
+          new Char('思', this.store, this.blinkingCursor, {color: 'purple', fontSize: 80}),
+          new Char('特', this.store, this.blinkingCursor, {color: 'red', fontSize: 80}),
+          new Char('沃', this.store, this.blinkingCursor, {color: 'orange', fontSize: 80}),
+          new Char('克', this.store, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
         ],
-        this.ctx,
+        this.store,
         this.left + this.paddingLeft,
         this.top,
         this.width - this.paddingLeft
@@ -124,23 +114,23 @@ export class CanvasTextEditor implements IRenderable {
     const pointRightBottom = new Victor(this.left + this.width, this.top + this.height);
 
     this.borders = [
-      new Border(pointLeftTop, pointRightTop, this.ctx),
-      new Border(pointRightTop, pointRightBottom, this.ctx),
-      new Border(pointRightBottom, pointLeftBottom, this.ctx),
-      new Border(pointLeftBottom, pointLeftTop, this.ctx),
+      new Border(pointLeftTop, pointRightTop, this.store),
+      new Border(pointRightTop, pointRightBottom, this.store),
+      new Border(pointRightBottom, pointLeftBottom, this.store),
+      new Border(pointLeftBottom, pointLeftTop, this.store),
     ];
   }
 
   private initSizeControlPoints() {
     this.sizeControlPoints = [
-      new SizeControlPoint(this.left, this.top, nwseResize, this.ctx),
-      new SizeControlPoint(this.left, this.top + this.height / 2, ewResize, this.ctx),
-      new SizeControlPoint(this.left, this.top + this.height, neswResize, this.ctx),
-      new SizeControlPoint(this.left + this.width / 2, this.top, nsResize, this.ctx),
-      new SizeControlPoint(this.left + this.width / 2, this.top + this.height, nsResize, this.ctx),
-      new SizeControlPoint(this.left + this.width, this.top, neswResize, this.ctx),
-      new SizeControlPoint(this.left + this.width, this.top + this.height / 2, ewResize, this.ctx),
-      new SizeControlPoint(this.left + this.width, this.top + this.height, nwseResize, this.ctx),
+      new SizeControlPoint(this.left, this.top, nwseResize, this.store),
+      new SizeControlPoint(this.left, this.top + this.height / 2, ewResize, this.store),
+      new SizeControlPoint(this.left, this.top + this.height, neswResize, this.store),
+      new SizeControlPoint(this.left + this.width / 2, this.top, nsResize, this.store),
+      new SizeControlPoint(this.left + this.width / 2, this.top + this.height, nsResize, this.store),
+      new SizeControlPoint(this.left + this.width, this.top, neswResize, this.store),
+      new SizeControlPoint(this.left + this.width, this.top + this.height / 2, ewResize, this.store),
+      new SizeControlPoint(this.left + this.width, this.top + this.height, nwseResize, this.store),
     ];
   }
 

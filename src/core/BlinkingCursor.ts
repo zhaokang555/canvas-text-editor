@@ -1,4 +1,5 @@
 import IRenderable from './IRenderable';
+import Store from './Store';
 
 const {round} = Math;
 
@@ -27,7 +28,7 @@ export default class BlinkingCursor implements IRenderable {
   private _left = -Infinity;
   private _top = -Infinity;
 
-  constructor(private ctx: CanvasRenderingContext2D) {}
+  constructor(private store: Store) {}
 
   show() {
     this.startBlinkingTimestamp = Date.now();
@@ -37,12 +38,12 @@ export default class BlinkingCursor implements IRenderable {
     const phase = (Date.now() - this.startBlinkingTimestamp) % duration;
 
     if (phase / duration < 0.5) {
-      this.ctx.beginPath();
-      this.ctx.moveTo(this.left, this.top);
-      this.ctx.lineTo(this.left, this.top + this.height);
-      this.ctx.strokeStyle = '#000';
-      this.ctx.lineWidth = 1;
-      this.ctx.stroke();
+      this.store.ctx.beginPath();
+      this.store.ctx.moveTo(this.left, this.top);
+      this.store.ctx.lineTo(this.left, this.top + this.height);
+      this.store.ctx.strokeStyle = '#000';
+      this.store.ctx.lineWidth = 1;
+      this.store.ctx.stroke();
     }
   }
 }

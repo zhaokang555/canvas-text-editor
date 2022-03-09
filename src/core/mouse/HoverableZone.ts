@@ -1,6 +1,7 @@
 import CursorType from '../CursorType';
 import { IBoundingBox } from '../IBoundingBox';
 import IRenderable from '../IRenderable';
+import Store from '../Store';
 
 export interface IHoverableZoneOptions {
   zIndex?: number;
@@ -18,23 +19,23 @@ export class HoverableZone implements IBoundingBox, IRenderable {
     public width: number,
     public height: number,
     public cursorType: CursorType,
-    protected ctx: CanvasRenderingContext2D,
+    protected store: Store,
     options: IHoverableZoneOptions = {},
   ) {
     // @ts-ignore
     Object.entries(options).forEach(([key, value]) => this[key] = value);
-    ctx.canvas.addEventListener('mousemove', this.handleMouseMove);
+    store.ctx.canvas.addEventListener('mousemove', this.handleMouseMove);
   }
 
   destructor() {
-    this.ctx.canvas.removeEventListener('mousemove', this.handleMouseMove);
+    this.store.ctx.canvas.removeEventListener('mousemove', this.handleMouseMove);
   }
 
   render() {
     if (this.isMouseHovering) {
-      if (this.zIndex >= HoverableZone.topLayerZIndex) {
-        HoverableZone.topLayerZIndex = this.zIndex;
-        HoverableZone.topLayerCursorType = this.cursorType;
+      if (this.zIndex >= this.store.mouse.hover.topLayerZIndex) {
+        this.store.mouse.hover.topLayerZIndex = this.zIndex;
+        this.store.mouse.hover.topLayerCursorType = this.cursorType;
 
         // this.ctx.strokeStyle = 'red';
         // this.ctx.strokeRect(this.left, this.top, this.width, this.height);
@@ -45,7 +46,7 @@ export class HoverableZone implements IBoundingBox, IRenderable {
   }
 
   private handleMouseMove = (evt: MouseEvent) => {
-    const rect = this.ctx.canvas.getBoundingClientRect();
+    const rect = this.store.ctx.canvas.getBoundingClientRect();
     const mouseX = evt.clientX - rect.left;
     const mouseY = evt.clientY - rect.top;
 
