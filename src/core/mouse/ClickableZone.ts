@@ -16,7 +16,7 @@ export default class ClickableZone implements IBoundingBox {
     public width: number,
     public height: number,
     public onClick: (mouseX: number, mouseY: number) => void,
-    protected store: Store,
+    public store: Store,
     options: IOptions = {},
   ) {
     // @ts-ignore

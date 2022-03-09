@@ -6,6 +6,7 @@ import BlinkingCursor from './BlinkingCursor';
 import SelectableZone from './mouse/SelectableZone';
 import HalfChar from './CanvasTextEditorHalfChar';
 import Store from './Store';
+import MousedownZone from './mouse/MousedownZone';
 
 const defaultZIndex = 10;
 
@@ -39,8 +40,16 @@ export default class CanvasTextEditorChar implements IRenderable {
     const height = this.textMetrics.fontBoundingBoxDescent + this.textMetrics.fontBoundingBoxAscent;
 
     this.boundingBox = new HoverableZone(-Infinity, -Infinity, width, height, CursorType.text, store, {zIndex: defaultZIndex});
-    this.leftHalf = new HalfChar(new ClickableZone(-Infinity, -Infinity, width / 2, height, this.handleClickLeft, store, {zIndex: defaultZIndex}));
-    this.rightHalf = new HalfChar(new ClickableZone(-Infinity, -Infinity, width / 2, height, this.handleClickRight, store, {zIndex: defaultZIndex}));
+    this.leftHalf = new HalfChar(
+      new ClickableZone(-Infinity, -Infinity, width / 2, height, this.handleClickLeft, store, {zIndex: defaultZIndex}),
+      this.handleMousedownLeft,
+      this.handleMouseupLeft,
+    );
+    this.rightHalf = new HalfChar(
+      new ClickableZone(-Infinity, -Infinity, width / 2, height, this.handleClickRight, store, {zIndex: defaultZIndex}),
+      this.handleMousedownRight,
+      this.handleMouseupRight,
+    );
     this.selectableZone = new SelectableZone(-Infinity, -Infinity, width, height, store);
   }
 
@@ -73,11 +82,8 @@ export default class CanvasTextEditorChar implements IRenderable {
     this.boundingBox.left = left;
     this.boundingBox.top = boundingBoxTop;
 
-    this.leftHalf.clickableZone.left = left;
-    this.leftHalf.clickableZone.top = boundingBoxTop;
-
-    this.rightHalf.clickableZone.left = left + this.width / 2;
-    this.rightHalf.clickableZone.top = boundingBoxTop;
+    this.leftHalf.setPosition(left, boundingBoxTop);
+    this.rightHalf.setPosition(left + this.width / 2, boundingBoxTop);
 
     this.selectableZone.left = left;
     this.selectableZone.top = boundingBoxTop;
@@ -115,4 +121,24 @@ export default class CanvasTextEditorChar implements IRenderable {
     this.blinkingCursor.height = this.fontSize;
     this.blinkingCursor.show();
   };
+
+  private handleMousedownLeft = () => {
+    this.store.clearSelect();
+    this.store.mouse.select.beginChar = this;
+  };
+
+  private handleMousedownRight = () => {
+    this.store.clearSelect();
+    this.store.mouse.select.beginChar = this.store.getGlobalNextChar(this);
+  };
+
+  private handleMouseupLeft = () => {
+    this.store.mouse.select.endChar = this.store.getGlobalPrevChar(this);
+    this.store.finishSelect();
+  }
+
+  private handleMouseupRight = () => {
+    this.store.mouse.select.endChar = this;
+    this.store.finishSelect();
+  }
 }

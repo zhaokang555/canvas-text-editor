@@ -78,33 +78,29 @@ export class CanvasTextEditor implements IRenderable {
   };
 
   private initParagraphs() {
-    this.paragraphs = [
-      new Paragraph(
-        [
-          new Char('/', this.store, this.blinkingCursor, {color: 'red', fontSize: 80}),
-          new Char('t', this.store, this.blinkingCursor, {color: 'orange', fontSize: 80}),
-          new Char('h', this.store, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
-          new Char('o', this.store, this.blinkingCursor, {color: 'green', fontSize: 80}),
-          new Char('u', this.store, this.blinkingCursor, {color: 'lightblue', fontSize: 80}),
-          new Char('g', this.store, this.blinkingCursor, {color: 'blue', fontSize: 80}),
-          new Char('h', this.store, this.blinkingCursor, {color: 'purple', fontSize: 80}),
-          new Char('t', this.store, this.blinkingCursor, {color: 'red', fontSize: 80}),
-          new Char('w', this.store, this.blinkingCursor, {color: 'orange', fontSize: 80}),
-          new Char('o', this.store, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
-          new Char('r', this.store, this.blinkingCursor, {color: 'green', fontSize: 80}),
-          new Char('k', this.store, this.blinkingCursor, {color: 'lightblue', fontSize: 80}),
-          new Char('s', this.store, this.blinkingCursor, {color: 'blue', fontSize: 80}),
-          new Char('思', this.store, this.blinkingCursor, {color: 'purple', fontSize: 80}),
-          new Char('特', this.store, this.blinkingCursor, {color: 'red', fontSize: 80}),
-          new Char('沃', this.store, this.blinkingCursor, {color: 'orange', fontSize: 80}),
-          new Char('克', this.store, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
-        ],
-        this.store,
-        this.left + this.paddingLeft,
-        this.top,
-        this.width - this.paddingLeft
-      )
+    const chars = [
+      new Char('/', this.store, this.blinkingCursor, {color: 'red', fontSize: 80}),
+      new Char('t', this.store, this.blinkingCursor, {color: 'orange', fontSize: 80}),
+      new Char('h', this.store, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
+      new Char('o', this.store, this.blinkingCursor, {color: 'green', fontSize: 80}),
+      new Char('u', this.store, this.blinkingCursor, {color: 'lightblue', fontSize: 80}),
+      new Char('g', this.store, this.blinkingCursor, {color: 'blue', fontSize: 80}),
+      new Char('h', this.store, this.blinkingCursor, {color: 'purple', fontSize: 80}),
+      new Char('t', this.store, this.blinkingCursor, {color: 'red', fontSize: 80}),
+      new Char('w', this.store, this.blinkingCursor, {color: 'orange', fontSize: 80}),
+      new Char('o', this.store, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
+      new Char('r', this.store, this.blinkingCursor, {color: 'green', fontSize: 80}),
+      new Char('k', this.store, this.blinkingCursor, {color: 'lightblue', fontSize: 80}),
+      new Char('s', this.store, this.blinkingCursor, {color: 'blue', fontSize: 80}),
+      new Char('思', this.store, this.blinkingCursor, {color: 'purple', fontSize: 80}),
+      new Char('特', this.store, this.blinkingCursor, {color: 'red', fontSize: 80}),
+      new Char('沃', this.store, this.blinkingCursor, {color: 'orange', fontSize: 80}),
+      new Char('克', this.store, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
     ];
+    this.paragraphs = [
+      new Paragraph(chars, this.store, this.left + this.paddingLeft, this.top, this.width - this.paddingLeft),
+    ];
+    this.store.chars.push(...chars);
   }
 
   private initBorder() {

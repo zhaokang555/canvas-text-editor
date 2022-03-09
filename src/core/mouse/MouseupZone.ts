@@ -1,22 +1,22 @@
 import Store from '../Store';
 
-export default class MousedownZone {
+export default class MouseupZone {
   constructor(
     public left: number,
     public top: number,
     public width: number,
     public height: number,
-    public onMousedown: () => void,
+    public onMouseup: () => void,
     public store: Store,
   ) {
-    this.store.ctx.canvas.addEventListener('mousedown', this.handleMousedown);
+    this.store.ctx.canvas.addEventListener('mouseup', this.handleMouseup);
   }
 
   destructor() {
-    this.store.ctx.canvas.removeEventListener('mousedown', this.handleMousedown);
+    this.store.ctx.canvas.removeEventListener('mouseup', this.handleMouseup);
   }
 
-  private handleMousedown = (evt: MouseEvent) => {
+  private handleMouseup = (evt: MouseEvent) => {
     const rect = this.store.ctx.canvas.getBoundingClientRect();
     const mouseX = evt.clientX - rect.left;
     const mouseY = evt.clientY - rect.top;
@@ -27,7 +27,7 @@ export default class MousedownZone {
       (mouseY <= this.top + this.height);
 
     if (isOnMe) {
-      this.onMousedown();
+      this.onMouseup();
     }
   };
 }
