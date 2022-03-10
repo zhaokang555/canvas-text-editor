@@ -27,14 +27,32 @@ export default class BlinkingCursor implements IRenderable {
 
   private _left = -Infinity;
   private _top = -Infinity;
+  private isShow = false;
 
   constructor(private store: Store) {}
 
   show() {
+    this.isShow = true;
     this.startBlinkingTimestamp = Date.now();
   }
 
+  hide() {
+    this.isShow = false;
+  }
+
+  afterClick() {
+    if (this.store.hasSelectText()) {
+      this.hide();
+    } else {
+      this.show();
+    }
+  }
+
   render(): void {
+    if (!this.isShow) {
+      return;
+    }
+
     const phase = (Date.now() - this.startBlinkingTimestamp) % duration;
 
     if (phase / duration < 0.5) {

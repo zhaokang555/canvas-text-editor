@@ -112,14 +112,14 @@ export default class CanvasTextEditorChar implements IRenderable {
       this.blinkingCursor.top = this.leftHalf.clickableZone.top;
       this.blinkingCursor.height = this.fontSize;
     }
-    this.blinkingCursor.show();
+    this.blinkingCursor.afterClick();
   };
 
   public handleClickRight = () => {
     this.blinkingCursor.left = this.rightHalf.clickableZone.left + this.rightHalf.clickableZone.width;
     this.blinkingCursor.top = this.rightHalf.clickableZone.top;
     this.blinkingCursor.height = this.fontSize;
-    this.blinkingCursor.show();
+    this.blinkingCursor.afterClick();
   };
 
   private handleMousedownLeft = () => {
@@ -135,10 +135,10 @@ export default class CanvasTextEditorChar implements IRenderable {
   private handleMouseupLeft = () => {
     this.store.mouse.select.endChar = this.store.getGlobalPrevChar(this);
     this.store.finishSelect();
-  }
+  };
 
   private handleMouseupRight = () => {
     this.store.mouse.select.endChar = this;
     this.store.finishSelect();
-  }
+  };
 }

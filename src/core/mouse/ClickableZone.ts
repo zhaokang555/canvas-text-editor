@@ -6,8 +6,6 @@ interface IOptions {
 }
 
 export default class ClickableZone implements IBoundingBox {
-  public static topLayerZIndex = -Infinity;
-  public static topLayerCallbacks: Array<() => void> = [];
   public zIndex = 0;
 
   constructor(

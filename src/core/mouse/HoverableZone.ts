@@ -8,8 +8,6 @@ export interface IHoverableZoneOptions {
 }
 
 export class HoverableZone implements IBoundingBox, IRenderable {
-  public static topLayerZIndex = -Infinity;
-  public static topLayerCursorType = CursorType.defaultCursor;
   public zIndex = 0;
   private isMouseHovering = false;
 

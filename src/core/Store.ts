@@ -51,4 +51,8 @@ export default class Store {
       this.chars.forEach(char => char.selectableZone.isSelected = false);
     }
   }
+
+  hasSelectText() {
+    return this.chars.some(char => char.selectableZone.isSelected);
+  }
 }
