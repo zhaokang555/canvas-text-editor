@@ -1,5 +1,6 @@
 import CursorType from './CursorType';
 import Char from './CanvasTextEditorChar';
+import HalfChar from './CanvasTextEditorHalfChar';
 
 export default class Store {
   chars = [] as Char[];
@@ -14,8 +15,10 @@ export default class Store {
       topLayerCursorType: CursorType.defaultCursor,
     },
     select: {
-      beginChar: null as Char | null,
-      endChar: null as Char | null,
+      mousedownChar: null as Char | null,
+      mouseupChar: null as Char | null,
+      isMousedownLeftHalf: true,
+      isMouseupLeftHalf: true,
     }
   };
 
@@ -23,33 +26,41 @@ export default class Store {
 
   }
 
-  getGlobalNextChar(char: Char): Char | null {
-    const i = this.chars.indexOf(char);
-    return this.chars[i + 1] || null;
-  }
-
-  getGlobalPrevChar(char: Char): Char | null {
-    const i = this.chars.indexOf(char);
-    return this.chars[i - 1] || null;
-  }
-
   clearSelect() {
-    this.mouse.select.beginChar = null;
-    this.mouse.select.endChar = null;
+    this.mouse.select.mousedownChar = null;
+    this.mouse.select.mouseupChar = null;
+    this.mouse.select.isMousedownLeftHalf = true;
+    this.mouse.select.isMouseupLeftHalf = true;
+    this.chars.forEach(char => char.selectableZone.isSelected = false);
   }
 
   finishSelect() {
-    const {beginChar, endChar} = this.mouse.select;
-    const beginIndex = this.chars.findIndex(char => char === beginChar);
-    const endIndex = this.chars.findIndex(char => char === endChar);
+    const {mousedownChar, mouseupChar, isMousedownLeftHalf, isMouseupLeftHalf} = this.mouse.select;
 
-    if (beginIndex > -1 && endIndex > -1) {
-      this.chars.forEach((char, i) => {
-        char.selectableZone.isSelected = (i >= beginIndex && i <= endIndex);
-      })
-    } else {
-      this.chars.forEach(char => char.selectableZone.isSelected = false);
+    if (!mousedownChar || !mouseupChar) {
+      return;
     }
+
+    const mousedownIndex = this.chars.findIndex(char => char === mousedownChar);
+    const mouseupIndex = this.chars.findIndex(char => char === mouseupChar);
+
+    let beginIndex: number, endIndex: number;
+    if (
+      mousedownIndex < mouseupIndex ||
+      (mousedownIndex === mouseupIndex && isMousedownLeftHalf && !isMouseupLeftHalf)
+    ) {
+      // select text from front to back
+      beginIndex = isMousedownLeftHalf ? mousedownIndex : mousedownIndex + 1;
+      endIndex = isMouseupLeftHalf ? mouseupIndex - 1 : mouseupIndex;
+    } else {
+      // select text from back to front
+      beginIndex = isMouseupLeftHalf ? mouseupIndex : mouseupIndex + 1;
+      endIndex = isMousedownLeftHalf ? mousedownIndex - 1 : mousedownIndex;
+    }
+
+    this.chars.forEach((char, i) => {
+      char.selectableZone.isSelected = (i >= beginIndex && i <= endIndex);
+    });
   }
 
   hasSelectText() {
