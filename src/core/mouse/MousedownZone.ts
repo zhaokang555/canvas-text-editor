@@ -6,7 +6,7 @@ export default class MousedownZone {
     public top: number,
     public width: number,
     public height: number,
-    public onMousedown: () => void,
+    public onMousedown: (mouseX: number, mouseY: number) => void,
     public store: Store,
   ) {
     this.store.ctx.canvas.addEventListener('mousedown', this.handleMousedown);
@@ -27,7 +27,7 @@ export default class MousedownZone {
       (mouseY <= this.top + this.height);
 
     if (isOnMe) {
-      this.onMousedown();
+      this.onMousedown(mouseX, mouseY);
     }
   };
 }

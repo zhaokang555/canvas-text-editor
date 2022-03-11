@@ -1,7 +1,7 @@
 import { IBoundingBox } from '../IBoundingBox';
 import Store from '../Store';
 
-interface IOptions {
+export interface IOptions {
   zIndex?: number;
 }
 

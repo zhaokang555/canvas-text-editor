@@ -6,9 +6,9 @@ import CursorType from './CursorType';
 import Border from './CanvasTextEditorBorder';
 import Victor from 'victor';
 import BlinkingCursor from './BlinkingCursor';
-import ClickableZone from './mouse/ClickableZone';
 import SoftLine from './CanvasTextEditorSoftLine';
 import Store from './Store';
+import MouseDownUpClickZone from './mouse/MouseDownUpClickZone';
 
 const {defaultCursor, ewResize, nsResize, neswResize, nwseResize} = CursorType;
 
@@ -34,7 +34,7 @@ export class CanvasTextEditor implements IRenderable {
   private sizeControlPoints: SizeControlPoint[] = [];
   private borders: Border[] = [];
   private blinkingCursor: BlinkingCursor;
-  private blankSpace: ClickableZone;
+  private blankSpace: MouseDownUpClickZone;
 
   constructor(canvas: HTMLCanvasElement, options: IOptions = {}) {
     // @ts-ignore
@@ -42,7 +42,16 @@ export class CanvasTextEditor implements IRenderable {
     this.canvas = canvas;
     const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     this.store = new Store(ctx);
-    this.blankSpace = new ClickableZone(this.left, this.top, this.width, this.height, this.handleClickOnTheBlankSpace, this.store);
+    this.blankSpace = new MouseDownUpClickZone(
+      this.left,
+      this.top,
+      this.width,
+      this.height,
+      this.handleClickOnTheBlankSpace,
+      this.handleMousedownBlankSpace,
+      this.handleMouseupBlankSpace,
+      this.store,
+    );
     this.blinkingCursor = new BlinkingCursor(this.store);
     this.initParagraphs();
     this.initBorder();
@@ -52,6 +61,7 @@ export class CanvasTextEditor implements IRenderable {
   }
 
   destructor() {
+    this.blankSpace.destructor();
     this.paragraphs.forEach(paragraph => paragraph.destructor());
     this.borders.forEach(border => border.destructor());
     this.sizeControlPoints.forEach(point => point.destructor());
@@ -152,6 +162,28 @@ export class CanvasTextEditor implements IRenderable {
         char.handleClickLeft();
       } else {
         char.handleClickRight();
+      }
+    }
+  };
+
+  private handleMousedownBlankSpace = (mouseX: number, mouseY: number) => {
+    const {char, leftSide} = this.mapPositionInBlankSpaceToChar(mouseX, mouseY);
+    if (char) {
+      if (leftSide) {
+        char.handleMousedownLeft();
+      } else {
+        char.handleMousedownRight();
+      }
+    }
+  };
+
+  private handleMouseupBlankSpace = (mouseX: number, mouseY: number) => {
+    const {char, leftSide} = this.mapPositionInBlankSpaceToChar(mouseX, mouseY);
+    if (char) {
+      if (leftSide) {
+        char.handleMouseupLeft();
+      } else {
+        char.handleMouseupRight();
       }
     }
   };

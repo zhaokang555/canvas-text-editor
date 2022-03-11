@@ -122,25 +122,25 @@ export default class CanvasTextEditorChar implements IRenderable {
     this.blinkingCursor.afterClick();
   };
 
-  private handleMousedownLeft = () => {
+  public handleMousedownLeft = () => {
     this.store.clearSelect();
     this.store.mouse.select.mousedownChar = this;
     this.store.mouse.select.isMousedownLeftHalf = true;
   };
 
-  private handleMousedownRight = () => {
+  public handleMousedownRight = () => {
     this.store.clearSelect();
     this.store.mouse.select.mousedownChar = this;
     this.store.mouse.select.isMousedownLeftHalf = false;
   };
 
-  private handleMouseupLeft = () => {
+  public handleMouseupLeft = () => {
     this.store.mouse.select.mouseupChar = this;
     this.store.mouse.select.isMouseupLeftHalf = true;
     this.store.finishSelect();
   };
 
-  private handleMouseupRight = () => {
+  public handleMouseupRight = () => {
     this.store.mouse.select.mouseupChar = this;
     this.store.mouse.select.isMouseupLeftHalf = false;
     this.store.finishSelect();

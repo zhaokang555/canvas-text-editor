@@ -6,7 +6,7 @@ export default class MouseupZone {
     public top: number,
     public width: number,
     public height: number,
-    public onMouseup: () => void,
+    public onMouseup: (mouseX: number, mouseY: number) => void,
     public store: Store,
   ) {
     this.store.ctx.canvas.addEventListener('mouseup', this.handleMouseup);
@@ -27,7 +27,7 @@ export default class MouseupZone {
       (mouseY <= this.top + this.height);
 
     if (isOnMe) {
-      this.onMouseup();
+      this.onMouseup(mouseX, mouseY);
     }
   };
 }
