@@ -1,5 +1,6 @@
 import CursorType from './CursorType';
 import Char from './CanvasTextEditorChar';
+import BlinkingCursor from './mouse/BlinkingCursor';
 
 export default class Store {
   chars = [] as Char[];
@@ -18,11 +19,13 @@ export default class Store {
       mouseupChar: null as Char | null,
       isMousedownLeftHalf: true,
       isMouseupLeftHalf: true,
-    }
+    },
   };
 
-  constructor(public ctx: CanvasRenderingContext2D, public container: HTMLDivElement) {
+  blinkingCursor: BlinkingCursor;
 
+  constructor(public ctx: CanvasRenderingContext2D, public container: HTMLDivElement) {
+    this.blinkingCursor = new BlinkingCursor(this);
   }
 
   clearSelect() {

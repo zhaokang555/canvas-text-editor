@@ -5,7 +5,6 @@ import { SizeControlPoint } from './SizeControlPoint';
 import CursorType from './CursorType';
 import Border from './CanvasTextEditorBorder';
 import Victor from 'victor';
-import BlinkingCursor from './BlinkingCursor';
 import SoftLine from './CanvasTextEditorSoftLine';
 import Store from './Store';
 import MouseDownUpClickZone from './mouse/MouseDownUpClickZone';
@@ -32,7 +31,6 @@ export class CanvasTextEditor implements IRenderable {
   private paragraphs: Paragraph[] = [];
   private sizeControlPoints: SizeControlPoint[] = [];
   private borders: Border[] = [];
-  private blinkingCursor: BlinkingCursor;
   private blankSpace: MouseDownUpClickZone;
 
   constructor(container: HTMLDivElement, options: IOptions = {}) {
@@ -54,7 +52,6 @@ export class CanvasTextEditor implements IRenderable {
       this.handleMouseupBlankSpace,
       this.store,
     );
-    this.blinkingCursor = new BlinkingCursor(this.store);
     this.initParagraphs();
     this.initBorder();
     this.initSizeControlPoints();
@@ -75,7 +72,7 @@ export class CanvasTextEditor implements IRenderable {
     this.paragraphs.forEach(p => p.render());
     this.borders.forEach(border => border.render());
     this.sizeControlPoints.forEach(point => point.render());
-    this.blinkingCursor.render();
+    this.store.blinkingCursor.render();
     this.store.ctx.canvas.style.cursor = this.store.mouse.hover.topLayerCursorType;
     this.store.mouse.click.topLayerCallbacks.forEach(cb => cb());
     this.store.mouse.click.topLayerCallbacks = [];
@@ -91,23 +88,23 @@ export class CanvasTextEditor implements IRenderable {
 
   private initParagraphs() {
     const chars = [
-      new Char('/', this.store, this.blinkingCursor, {color: 'red', fontSize: 80}),
-      new Char('t', this.store, this.blinkingCursor, {color: 'orange', fontSize: 80}),
-      new Char('h', this.store, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
-      new Char('o', this.store, this.blinkingCursor, {color: 'green', fontSize: 80}),
-      new Char('u', this.store, this.blinkingCursor, {color: 'lightblue', fontSize: 80}),
-      new Char('g', this.store, this.blinkingCursor, {color: 'blue', fontSize: 80}),
-      new Char('h', this.store, this.blinkingCursor, {color: 'purple', fontSize: 80}),
-      new Char('t', this.store, this.blinkingCursor, {color: 'red', fontSize: 80}),
-      new Char('w', this.store, this.blinkingCursor, {color: 'orange', fontSize: 80}),
-      new Char('o', this.store, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
-      new Char('r', this.store, this.blinkingCursor, {color: 'green', fontSize: 80}),
-      new Char('k', this.store, this.blinkingCursor, {color: 'lightblue', fontSize: 80}),
-      new Char('s', this.store, this.blinkingCursor, {color: 'blue', fontSize: 80}),
-      new Char('思', this.store, this.blinkingCursor, {color: 'purple', fontSize: 80}),
-      new Char('特', this.store, this.blinkingCursor, {color: 'red', fontSize: 80}),
-      new Char('沃', this.store, this.blinkingCursor, {color: 'orange', fontSize: 80}),
-      new Char('克', this.store, this.blinkingCursor, {color: 'yellow', fontSize: 80}),
+      new Char('/', this.store, {color: 'red', fontSize: 80}),
+      new Char('t', this.store, {color: 'orange', fontSize: 80}),
+      new Char('h', this.store, {color: 'yellow', fontSize: 80}),
+      new Char('o', this.store, {color: 'green', fontSize: 80}),
+      new Char('u', this.store, {color: 'lightblue', fontSize: 80}),
+      new Char('g', this.store, {color: 'blue', fontSize: 80}),
+      new Char('h', this.store, {color: 'purple', fontSize: 80}),
+      new Char('t', this.store, {color: 'red', fontSize: 80}),
+      new Char('w', this.store, {color: 'orange', fontSize: 80}),
+      new Char('o', this.store, {color: 'yellow', fontSize: 80}),
+      new Char('r', this.store, {color: 'green', fontSize: 80}),
+      new Char('k', this.store, {color: 'lightblue', fontSize: 80}),
+      new Char('s', this.store, {color: 'blue', fontSize: 80}),
+      new Char('思', this.store, {color: 'purple', fontSize: 80}),
+      new Char('特', this.store, {color: 'red', fontSize: 80}),
+      new Char('沃', this.store, {color: 'orange', fontSize: 80}),
+      new Char('克', this.store, {color: 'yellow', fontSize: 80}),
     ];
     this.paragraphs = [
       new Paragraph(chars, this.store, this.left + this.paddingLeft, this.top, this.width - this.paddingLeft),
@@ -143,7 +140,7 @@ export class CanvasTextEditor implements IRenderable {
   }
 
   private moveBlinkingCursorToEnd() {
-    const blinkingCursor = this.blinkingCursor;
+    const blinkingCursor = this.store.blinkingCursor;
     if (this.paragraphs.length > 0) {
       const lastParagraph = this.paragraphs[this.paragraphs.length - 1];
       const lastChar = lastParagraph.chars[lastParagraph.chars.length - 1];

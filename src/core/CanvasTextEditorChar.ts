@@ -1,7 +1,6 @@
 import IRenderable from './IRenderable';
 import { HoverableZone } from './mouse/HoverableZone';
 import CursorType from './CursorType';
-import BlinkingCursor from './BlinkingCursor';
 import SelectableZone from './mouse/SelectableZone';
 import Store from './Store';
 import MouseDownUpClickZone from './mouse/MouseDownUpClickZone';
@@ -27,7 +26,6 @@ export default class CanvasTextEditorChar implements IRenderable {
   constructor(
     private char: string,
     private store: Store,
-    private blinkingCursor: BlinkingCursor,
     options: IOptions = {}
   ) {
     // @ts-ignore
@@ -100,22 +98,22 @@ export default class CanvasTextEditorChar implements IRenderable {
 
   public handleClickLeft = () => {
     if (this.prev) {
-      this.blinkingCursor.left = this.prev.rightHalf.left + this.prev.rightHalf.width;
-      this.blinkingCursor.top = this.prev.rightHalf.top;
-      this.blinkingCursor.height = this.prev.fontSize;
+      this.store.blinkingCursor.left = this.prev.rightHalf.left + this.prev.rightHalf.width;
+      this.store.blinkingCursor.top = this.prev.rightHalf.top;
+      this.store.blinkingCursor.height = this.prev.fontSize;
     } else {
-      this.blinkingCursor.left = this.leftHalf.left;
-      this.blinkingCursor.top = this.leftHalf.top;
-      this.blinkingCursor.height = this.fontSize;
+      this.store.blinkingCursor.left = this.leftHalf.left;
+      this.store.blinkingCursor.top = this.leftHalf.top;
+      this.store.blinkingCursor.height = this.fontSize;
     }
-    this.blinkingCursor.afterClick();
+    this.store.blinkingCursor.afterClick();
   };
 
   public handleClickRight = () => {
-    this.blinkingCursor.left = this.rightHalf.left + this.rightHalf.width;
-    this.blinkingCursor.top = this.rightHalf.top;
-    this.blinkingCursor.height = this.fontSize;
-    this.blinkingCursor.afterClick();
+    this.store.blinkingCursor.left = this.rightHalf.left + this.rightHalf.width;
+    this.store.blinkingCursor.top = this.rightHalf.top;
+    this.store.blinkingCursor.height = this.fontSize;
+    this.store.blinkingCursor.afterClick();
   };
 
   public handleMousedownLeft = () => {

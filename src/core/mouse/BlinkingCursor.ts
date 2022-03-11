@@ -1,5 +1,5 @@
-import IRenderable from './IRenderable';
-import Store from './Store';
+import IRenderable from '../IRenderable';
+import Store from '../Store';
 
 const {round} = Math;
 
