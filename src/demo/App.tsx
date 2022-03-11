@@ -11,7 +11,9 @@ function App() {
   }, []);
 
   return (
-    <div ref={container}></div>
+    <div ref={container}>
+      <canvas width="800" height="600"/>
+    </div>
   );
 }
 
