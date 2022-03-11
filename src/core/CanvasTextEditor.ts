@@ -36,6 +36,7 @@ export class CanvasTextEditor implements IRenderable {
   constructor(container: HTMLDivElement, options: IOptions = {}) {
     // @ts-ignore
     Object.entries(options).forEach(([key, value]) => this[key] = value);
+    container.innerHTML = '';
     const canvas = document.createElement('canvas');
     canvas.width = 800;
     canvas.height = 600;
