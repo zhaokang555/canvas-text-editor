@@ -146,6 +146,22 @@ export class CanvasTextEditor implements IRenderable {
   }
 
   private handleClickOnTheBlankSpace = (mouseX: number, mouseY: number) => {
+    const {char, leftSide} = this.mapPositionInBlankSpaceToChar(mouseX, mouseY);
+    if (char) {
+      if (leftSide) {
+        char.handleClickLeft();
+      } else {
+        char.handleClickRight();
+      }
+    }
+  };
+
+  private mapPositionInBlankSpaceToChar(mouseX: number, mouseY: number) {
+    const returnValue = {
+      char: null as Char | null,
+      leftSide: true,
+    };
+
     // 1. 找到距离点击位置最近的行
     let nearestSoftLine: SoftLine | null = null;
     let nearestVerticalDistance = Infinity;
@@ -163,12 +179,12 @@ export class CanvasTextEditor implements IRenderable {
       }
     }
 
-    if (nearestSoftLine == null) return;
+    if (nearestSoftLine == null) return returnValue;
 
     // 2. 在此行内找到距离点击位置最近的字符
     if (mouseX <= nearestSoftLine.chars[0].left) { // handle click on paddingLeft
-      nearestSoftLine.chars[0].handleClickLeft();
-      return;
+      returnValue.char = nearestSoftLine.chars[0];
+      return returnValue;
     }
     let nearestChar: Char = nearestSoftLine.chars[0];
     let nearestHorizontalDistance = mouseX - nearestChar.left;
@@ -180,11 +196,9 @@ export class CanvasTextEditor implements IRenderable {
       }
     }
 
-    // 3. 在此字符的左侧或者右侧插入光标
-    if (nearestHorizontalDistance <= nearestChar.width / 2) {
-      nearestChar.handleClickLeft();
-    } else {
-      nearestChar.handleClickRight();
-    }
-  };
+    // 3. 映射到此字符的左侧或者右侧
+    returnValue.leftSide = nearestHorizontalDistance <= nearestChar.width / 2;
+    returnValue.char = nearestChar;
+    return returnValue;
+  }
 }
