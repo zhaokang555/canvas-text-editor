@@ -21,7 +21,7 @@ export default class Store {
     }
   };
 
-  constructor(public ctx: CanvasRenderingContext2D) {
+  constructor(public ctx: CanvasRenderingContext2D, public container: HTMLDivElement) {
 
   }
 

@@ -22,7 +22,6 @@ interface IOptions {
 }
 
 export class CanvasTextEditor implements IRenderable {
-  canvas: HTMLCanvasElement;
   store: Store;
   left = 0;
   top = 0;
@@ -36,12 +35,15 @@ export class CanvasTextEditor implements IRenderable {
   private blinkingCursor: BlinkingCursor;
   private blankSpace: MouseDownUpClickZone;
 
-  constructor(canvas: HTMLCanvasElement, options: IOptions = {}) {
+  constructor(container: HTMLDivElement, options: IOptions = {}) {
     // @ts-ignore
     Object.entries(options).forEach(([key, value]) => this[key] = value);
-    this.canvas = canvas;
-    const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
-    this.store = new Store(ctx);
+    const canvas = document.createElement('canvas');
+    canvas.width = 800;
+    canvas.height = 600;
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    this.store = new Store(ctx, container);
     this.blankSpace = new MouseDownUpClickZone(
       this.left,
       this.top,
@@ -69,20 +71,20 @@ export class CanvasTextEditor implements IRenderable {
 
   render = () => {
     requestAnimationFrame(this.render);
-    this.clearCanvas();
+    this.clearEditor();
     this.paragraphs.forEach(p => p.render());
     this.borders.forEach(border => border.render());
     this.sizeControlPoints.forEach(point => point.render());
     this.blinkingCursor.render();
-    this.canvas.style.cursor = this.store.mouse.hover.topLayerCursorType;
+    this.store.ctx.canvas.style.cursor = this.store.mouse.hover.topLayerCursorType;
     this.store.mouse.click.topLayerCallbacks.forEach(cb => cb());
     this.store.mouse.click.topLayerCallbacks = [];
     this.store.mouse.click.topLayerZIndex = -Infinity;
   };
 
-  clearCanvas = () => {
+  clearEditor = () => {
     this.store.ctx.fillStyle = this.backgroundColor;
-    this.store.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.store.ctx.fillRect(this.left, this.top, this.width, this.height);
     this.store.mouse.hover.topLayerZIndex = -Infinity;
     this.store.mouse.hover.topLayerCursorType = defaultCursor;
   };
