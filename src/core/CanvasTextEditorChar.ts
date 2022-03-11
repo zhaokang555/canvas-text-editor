@@ -1,12 +1,10 @@
 import IRenderable from './IRenderable';
 import { HoverableZone } from './mouse/HoverableZone';
 import CursorType from './CursorType';
-import ClickableZone from './mouse/ClickableZone';
 import BlinkingCursor from './BlinkingCursor';
 import SelectableZone from './mouse/SelectableZone';
-import HalfChar from './CanvasTextEditorHalfChar';
 import Store from './Store';
-import MousedownZone from './mouse/MousedownZone';
+import MouseDownUpClickZone from './mouse/MouseDownUpClickZone';
 
 const defaultZIndex = 10;
 
@@ -22,8 +20,8 @@ export default class CanvasTextEditorChar implements IRenderable {
   fontSize = 50;
   prev: CanvasTextEditorChar | null = null;
   boundingBox: HoverableZone;
-  leftHalf: HalfChar;
-  rightHalf: HalfChar;
+  leftHalf: MouseDownUpClickZone;
+  rightHalf: MouseDownUpClickZone;
   selectableZone: SelectableZone;
 
   constructor(
@@ -40,15 +38,13 @@ export default class CanvasTextEditorChar implements IRenderable {
     const height = this.textMetrics.fontBoundingBoxDescent + this.textMetrics.fontBoundingBoxAscent;
 
     this.boundingBox = new HoverableZone(-Infinity, -Infinity, width, height, CursorType.text, store, {zIndex: defaultZIndex});
-    this.leftHalf = new HalfChar(
-      new ClickableZone(-Infinity, -Infinity, width / 2, height, this.handleClickLeft, store, {zIndex: defaultZIndex}),
-      this.handleMousedownLeft,
-      this.handleMouseupLeft,
+    this.leftHalf = new MouseDownUpClickZone(-Infinity, -Infinity, width / 2, height,
+      this.handleClickLeft, this.handleMousedownLeft, this.handleMouseupLeft,
+      store, {zIndex: defaultZIndex}
     );
-    this.rightHalf = new HalfChar(
-      new ClickableZone(-Infinity, -Infinity, width / 2, height, this.handleClickRight, store, {zIndex: defaultZIndex}),
-      this.handleMousedownRight,
-      this.handleMouseupRight,
+    this.rightHalf = new MouseDownUpClickZone(-Infinity, -Infinity, width / 2, height,
+      this.handleClickRight, this.handleMousedownRight, this.handleMouseupRight,
+      store, {zIndex: defaultZIndex}
     );
     this.selectableZone = new SelectableZone(-Infinity, -Infinity, width, height, store);
   }
@@ -71,8 +67,8 @@ export default class CanvasTextEditorChar implements IRenderable {
 
   destructor() {
     this.boundingBox.destructor();
-    this.leftHalf.clickableZone.destructor();
-    this.rightHalf.clickableZone.destructor();
+    this.leftHalf.destructor();
+    this.rightHalf.destructor();
   }
 
   setPosition = (left: number, top: number) => {
@@ -104,20 +100,20 @@ export default class CanvasTextEditorChar implements IRenderable {
 
   public handleClickLeft = () => {
     if (this.prev) {
-      this.blinkingCursor.left = this.prev.rightHalf.clickableZone.left + this.prev.rightHalf.clickableZone.width;
-      this.blinkingCursor.top = this.prev.rightHalf.clickableZone.top;
+      this.blinkingCursor.left = this.prev.rightHalf.left + this.prev.rightHalf.width;
+      this.blinkingCursor.top = this.prev.rightHalf.top;
       this.blinkingCursor.height = this.prev.fontSize;
     } else {
-      this.blinkingCursor.left = this.leftHalf.clickableZone.left;
-      this.blinkingCursor.top = this.leftHalf.clickableZone.top;
+      this.blinkingCursor.left = this.leftHalf.left;
+      this.blinkingCursor.top = this.leftHalf.top;
       this.blinkingCursor.height = this.fontSize;
     }
     this.blinkingCursor.afterClick();
   };
 
   public handleClickRight = () => {
-    this.blinkingCursor.left = this.rightHalf.clickableZone.left + this.rightHalf.clickableZone.width;
-    this.blinkingCursor.top = this.rightHalf.clickableZone.top;
+    this.blinkingCursor.left = this.rightHalf.left + this.rightHalf.width;
+    this.blinkingCursor.top = this.rightHalf.top;
     this.blinkingCursor.height = this.fontSize;
     this.blinkingCursor.afterClick();
   };

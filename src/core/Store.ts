@@ -1,6 +1,5 @@
 import CursorType from './CursorType';
 import Char from './CanvasTextEditorChar';
-import HalfChar from './CanvasTextEditorHalfChar';
 
 export default class Store {
   chars = [] as Char[];
