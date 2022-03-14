@@ -64,7 +64,7 @@ export class CanvasTextEditor implements IRenderable {
 
   render = () => {
     requestAnimationFrame(this.render);
-    this.clearEditor();
+    this.clearCanvas();
     this.store.paragraphs.forEach(p => p.render());
     this.borders.forEach(border => border.render());
     this.sizeControlPoints.forEach(point => point.render());
@@ -75,9 +75,9 @@ export class CanvasTextEditor implements IRenderable {
     this.store.mouse.click.topLayerZIndex = -Infinity;
   };
 
-  clearEditor = () => {
+  clearCanvas = () => {
     this.store.ctx.fillStyle = this.backgroundColor;
-    this.store.ctx.fillRect(this.left, this.top, this.width, this.height);
+    this.store.ctx.fillRect(0, 0, this.store.ctx.canvas.width, this.store.ctx.canvas.height);
     this.store.mouse.hover.topLayerZIndex = -Infinity;
     this.store.mouse.hover.topLayerCursorType = defaultCursor;
   };
