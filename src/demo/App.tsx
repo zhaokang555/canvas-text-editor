@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { CanvasTextEditor } from '../core/CanvasTextEditor';
+import styles from './App.module.scss';
 
 function App() {
   const container = useRef<HTMLDivElement>(null);
@@ -12,7 +13,7 @@ function App() {
 
   return (
     <div ref={container}>
-      <canvas width="800" height="600"/>
+      <canvas width="800" height="600" className={styles.canvas}/>
     </div>
   );
 }
