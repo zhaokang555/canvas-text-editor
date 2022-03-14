@@ -14,7 +14,6 @@ export default class CanvasTextEditorParagraph {
     private top: number,
     private maxWidth: number,
   ) {
-    this.calcLayoutForSoftLines();
     this.calcLayout();
   }
 
@@ -22,7 +21,19 @@ export default class CanvasTextEditorParagraph {
     this.chars.forEach(char => char.destructor());
   }
 
+  calcLayout = () => {
+    this.calcLayoutForSoftLines();
+    this.width = Math.max(...(this.softLines.map(softLine => softLine.width)));
+    this.height = this.softLines.reduce((sum, softLine) => sum + softLine.height, 0);
+  };
+
+  render = () => {
+    this.chars.forEach(char => char.render());
+  };
+
   private calcLayoutForSoftLines = () => {
+    this.softLines = [];
+
     let softLineChars: Char[] = [];
     let softLineWidth = 0;
     let softLineHeight = 0;
@@ -55,14 +66,5 @@ export default class CanvasTextEditorParagraph {
       const softLine = new SoftLine(softLineChars, softLineWidth, softLineHeight, this.left, top);
       this.softLines.push(softLine);
     }
-  };
-
-  private calcLayout = () => {
-    this.width = Math.max(...(this.softLines.map(softLine => softLine.width)));
-    this.height = this.softLines.reduce((sum, softLine) => sum + softLine.height, 0);
-  };
-
-  render = () => {
-    this.chars.forEach(char => char.render());
   };
 }

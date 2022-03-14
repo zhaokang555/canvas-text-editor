@@ -101,19 +101,49 @@ export default class CanvasTextEditorChar implements IRenderable {
       this.store.blinkingCursor.left = this.prev.rightHalf.left + this.prev.rightHalf.width;
       this.store.blinkingCursor.top = this.prev.rightHalf.top;
       this.store.blinkingCursor.height = this.prev.fontSize;
+      this.store.blinkingCursor.color = this.prev.color;
+      this.store.blinkingCursor.fontSize = this.prev.fontSize;
     } else {
       this.store.blinkingCursor.left = this.leftHalf.left;
       this.store.blinkingCursor.top = this.leftHalf.top;
       this.store.blinkingCursor.height = this.fontSize;
+      this.store.blinkingCursor.color = this.color;
+      this.store.blinkingCursor.fontSize = this.fontSize;
     }
     this.store.blinkingCursor.afterClick();
+
+    this.store.paragraphs.forEach((p, i) => {
+      const charIndexInP = p.chars.indexOf(this);
+      if (charIndexInP > -1) {
+        this.store.curParaIdx = i;
+
+        this.store.cursorIdxInCurPara = charIndexInP;
+        if (this.store.cursorIdxInCurPara < 0) this.store.cursorIdxInCurPara = 0;
+      }
+    });
+
+    this.store.cursorIdxInChars = this.store.chars.indexOf(this);
   };
 
   public handleClickRight = () => {
     this.store.blinkingCursor.left = this.rightHalf.left + this.rightHalf.width;
     this.store.blinkingCursor.top = this.rightHalf.top;
     this.store.blinkingCursor.height = this.fontSize;
+    this.store.blinkingCursor.color = this.color;
+    this.store.blinkingCursor.fontSize = this.fontSize;
     this.store.blinkingCursor.afterClick();
+
+    this.store.paragraphs.forEach((p, i) => {
+      const charIndexInP = p.chars.indexOf(this);
+      if (charIndexInP > -1) {
+        this.store.curParaIdx = i;
+
+        this.store.cursorIdxInCurPara = charIndexInP + 1;
+      }
+    });
+
+    const charIndex = this.store.chars.indexOf(this);
+    this.store.cursorIdxInChars = charIndex + 1;
   };
 
   public handleMousedownLeft = () => {

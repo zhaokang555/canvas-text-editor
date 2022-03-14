@@ -1,9 +1,11 @@
 import CursorType from './CursorType';
 import Char from './CanvasTextEditorChar';
 import BlinkingCursor from './mouse/BlinkingCursor';
+import Paragraph from './CanvasTextEditorParagraph';
 
 export default class Store {
   chars = [] as Char[];
+  paragraphs: Paragraph[] = [];
 
   mouse = {
     click: {
@@ -23,6 +25,9 @@ export default class Store {
   };
 
   blinkingCursor: BlinkingCursor;
+  cursorIdxInChars = 0;
+  curParaIdx = 0;
+  cursorIdxInCurPara = 0;
 
   constructor(public ctx: CanvasRenderingContext2D, public container: HTMLDivElement) {
     this.blinkingCursor = new BlinkingCursor(this);
