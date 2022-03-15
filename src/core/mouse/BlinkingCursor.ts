@@ -1,6 +1,7 @@
 import IRenderable from '../IRenderable';
 import Store from '../Store';
 import Char from '../CanvasTextEditorChar';
+import CompositionChar from '../CanvasTextEditorCompositionChar';
 
 const {round} = Math;
 
@@ -46,14 +47,21 @@ export default class BlinkingCursor implements IRenderable {
       container.appendChild(input);
       input.addEventListener('input', evt => {
         const inputEvent = evt as InputEvent;
-        if (inputEvent.inputType === 'insertText' && inputEvent.data) {
+        if (inputEvent.inputType === 'insertText' && inputEvent.data != null) {
           const char = new Char(inputEvent.data, store, {color: this.color, fontSize: this.fontSize});
-          this.store.paragraphs[this.store.curParaIdx].chars.splice(this.store.cursorIdxInCurPara, 0, char);
-          this.store.chars.splice(this.store.cursorIdxInChars, 0, char);
-          this.store.paragraphs.forEach(p => p.calcLayout());
-          char.handleClickRight();
+          this.store.insertChar(char);
+        } else if (inputEvent.inputType === 'insertCompositionText') {
+          this.store.clearTempCompositionChars();
+          if (inputEvent.data != null) {
+            const chars = inputEvent.data.split('').map(char => new CompositionChar(char, store, {
+              color: this.color,
+              fontSize: this.fontSize
+            }));
+            this.store.insertChars(chars);
+          }
         }
       });
+      input.addEventListener('compositionend', () => this.store.fixTempCompositionChar());
     }
     this.input = input;
   }
@@ -61,16 +69,18 @@ export default class BlinkingCursor implements IRenderable {
   show() {
     this.isShow = true;
     this.startBlinkingTimestamp = Date.now();
-    this.input.value = '';
-    this.input.focus();
+    if (document.activeElement !== this.input) {
+      this.input.focus();
+    }
   }
 
   hide() {
     this.isShow = false;
     this.input.blur();
+    this.input.value = '';
   }
 
-  afterClick() {
+  checkShouldShow() {
     if (this.store.hasSelectText()) {
       this.hide();
     } else {

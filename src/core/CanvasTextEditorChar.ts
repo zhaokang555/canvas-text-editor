@@ -7,7 +7,7 @@ import MouseDownUpClickZone from './mouse/MouseDownUpClickZone';
 
 const defaultZIndex = 10;
 
-interface IOptions {
+export interface IOptions {
   color?: string;
   fontSize?: number;
 }
@@ -96,7 +96,7 @@ export default class CanvasTextEditorChar implements IRenderable {
     this.store.ctx.font = `${this.fontSize}px sans-serif`;
   }
 
-  public handleClickLeft = () => {
+  public moveCursorToMyLeft = () => {
     if (this.prev) {
       this.store.blinkingCursor.left = this.prev.rightHalf.left + this.prev.rightHalf.width;
       this.store.blinkingCursor.top = this.prev.rightHalf.top;
@@ -110,7 +110,6 @@ export default class CanvasTextEditorChar implements IRenderable {
       this.store.blinkingCursor.color = this.color;
       this.store.blinkingCursor.fontSize = this.fontSize;
     }
-    this.store.blinkingCursor.afterClick();
 
     this.store.paragraphs.forEach((p, i) => {
       const charIndexInP = p.chars.indexOf(this);
@@ -121,17 +120,15 @@ export default class CanvasTextEditorChar implements IRenderable {
         if (this.store.cursorIdxInCurPara < 0) this.store.cursorIdxInCurPara = 0;
       }
     });
-
     this.store.cursorIdxInChars = this.store.chars.indexOf(this);
   };
 
-  public handleClickRight = () => {
+  public moveCursorToMyRight = () => {
     this.store.blinkingCursor.left = this.rightHalf.left + this.rightHalf.width;
     this.store.blinkingCursor.top = this.rightHalf.top;
     this.store.blinkingCursor.height = this.fontSize;
     this.store.blinkingCursor.color = this.color;
     this.store.blinkingCursor.fontSize = this.fontSize;
-    this.store.blinkingCursor.afterClick();
 
     this.store.paragraphs.forEach((p, i) => {
       const charIndexInP = p.chars.indexOf(this);
@@ -141,9 +138,18 @@ export default class CanvasTextEditorChar implements IRenderable {
         this.store.cursorIdxInCurPara = charIndexInP + 1;
       }
     });
-
     const charIndex = this.store.chars.indexOf(this);
     this.store.cursorIdxInChars = charIndex + 1;
+  };
+
+  public handleClickLeft = () => {
+    this.moveCursorToMyLeft();
+    this.store.blinkingCursor.checkShouldShow();
+  };
+
+  public handleClickRight = () => {
+    this.moveCursorToMyRight();
+    this.store.blinkingCursor.checkShouldShow();
   };
 
   public handleMousedownLeft = () => {

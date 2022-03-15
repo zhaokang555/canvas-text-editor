@@ -2,6 +2,7 @@ import CursorType from './CursorType';
 import Char from './CanvasTextEditorChar';
 import BlinkingCursor from './mouse/BlinkingCursor';
 import Paragraph from './CanvasTextEditorParagraph';
+import CompositionChar from './CanvasTextEditorCompositionChar';
 
 export default class Store {
   chars = [] as Char[];
@@ -72,5 +73,45 @@ export default class Store {
 
   hasSelectText() {
     return this.chars.some(char => char.selectableZone.isSelected);
+  }
+
+  insertChar(char: Char) {
+    this.chars.splice(this.cursorIdxInChars, 0, char);
+    this.paragraphs[this.curParaIdx].chars.splice(this.cursorIdxInCurPara, 0, char);
+    this.paragraphs.forEach(p => p.calcLayout());
+    char.moveCursorToMyRight();
+  }
+
+  insertChars(chars: CompositionChar[]) {
+    this.chars.splice(this.cursorIdxInChars, 0, ...chars);
+    this.paragraphs[this.curParaIdx].chars.splice(this.cursorIdxInCurPara, 0, ...chars);
+    this.paragraphs.forEach(p => p.calcLayout());
+    chars[chars.length - 1].moveCursorToMyRight();
+  }
+
+  clearTempCompositionChars() {
+    const notTempCompositionChar = (char: Char) => {
+      if (char instanceof CompositionChar) {
+        return !char.isTemp;
+      }
+      return true;
+    };
+    this.chars = this.chars.filter(notTempCompositionChar);
+    this.paragraphs.forEach(para => {
+      const filteredChars = para.chars.filter(notTempCompositionChar);
+      const backSteps = para.chars.length - filteredChars.length;
+      this.cursorIdxInChars -= backSteps;
+      this.cursorIdxInCurPara -= backSteps;
+      para.chars = filteredChars;
+      para.calcLayout();
+    });
+  }
+
+  fixTempCompositionChar() {
+    this.chars.forEach(char => {
+      if (char instanceof CompositionChar) {
+        char.isTemp = false;
+      }
+    })
   }
 }
