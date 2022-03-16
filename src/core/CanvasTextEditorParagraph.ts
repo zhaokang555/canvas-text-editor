@@ -11,7 +11,7 @@ export default class CanvasTextEditorParagraph {
     public chars: Char[],
     private store: Store,
     private left: number,
-    private top: number,
+    public top: number,
     private maxWidth: number,
   ) {
     this.calcLayout();

@@ -3,10 +3,16 @@ import Char from './CanvasTextEditorChar';
 import BlinkingCursor from './mouse/BlinkingCursor';
 import Paragraph from './CanvasTextEditorParagraph';
 import CompositionChar from './CanvasTextEditorCompositionChar';
+import { CanvasTextEditor as Editor } from './CanvasTextEditor';
 
 export default class Store {
   chars = [] as Char[];
   paragraphs: Paragraph[] = [];
+  blinkingCursor: BlinkingCursor;
+  cursorIdxInChars = 0;
+  curParaIdx = 0;
+  cursorIdxInCurPara = 0;
+  isComposition = false;
 
   mouse = {
     click: {
@@ -25,12 +31,7 @@ export default class Store {
     },
   };
 
-  blinkingCursor: BlinkingCursor;
-  cursorIdxInChars = 0;
-  curParaIdx = 0;
-  cursorIdxInCurPara = 0;
-
-  constructor(public ctx: CanvasRenderingContext2D, public container: HTMLDivElement) {
+  constructor(public ctx: CanvasRenderingContext2D, public container: HTMLDivElement, public editor: Editor) {
     this.blinkingCursor = new BlinkingCursor(this);
   }
 
@@ -77,34 +78,25 @@ export default class Store {
 
   insertChar(char: Char) {
     this.chars.splice(this.cursorIdxInChars, 0, char);
-    this.paragraphs[this.curParaIdx].chars.splice(this.cursorIdxInCurPara, 0, char);
-    this.paragraphs.forEach(p => p.calcLayout());
+    this.splitCharsIntoParagraphs();
     char.moveCursorToMyRight();
   }
 
   insertChars(chars: CompositionChar[]) {
     this.chars.splice(this.cursorIdxInChars, 0, ...chars);
-    this.paragraphs[this.curParaIdx].chars.splice(this.cursorIdxInCurPara, 0, ...chars);
-    this.paragraphs.forEach(p => p.calcLayout());
+    this.splitCharsIntoParagraphs();
     chars[chars.length - 1].moveCursorToMyRight();
   }
 
   clearTempCompositionChars() {
-    const notTempCompositionChar = (char: Char) => {
-      if (char instanceof CompositionChar) {
-        return !char.isTemp;
-      }
-      return true;
-    };
-    this.chars = this.chars.filter(notTempCompositionChar);
-    this.paragraphs.forEach(para => {
-      const filteredChars = para.chars.filter(notTempCompositionChar);
-      const backSteps = para.chars.length - filteredChars.length;
-      this.cursorIdxInChars -= backSteps;
-      this.cursorIdxInCurPara -= backSteps;
-      para.chars = filteredChars;
-      para.calcLayout();
-    });
+    const isTempCompositionChar = (char: Char) => char instanceof CompositionChar && char.isTemp;
+    const firstTempCompositionChar = this.chars.find(isTempCompositionChar);
+
+    if (firstTempCompositionChar) {
+      firstTempCompositionChar.moveCursorToMyLeft();
+      this.chars = this.chars.filter(char => !isTempCompositionChar(char));
+      this.splitCharsIntoParagraphs();
+    }
   }
 
   fixTempCompositionChar() {
@@ -112,6 +104,43 @@ export default class Store {
       if (char instanceof CompositionChar) {
         char.isTemp = false;
       }
-    })
+    });
+  }
+
+  splitCharsIntoParagraphs() {
+    const {chars, editor} = this;
+    this.paragraphs = [];
+
+    let charsInNewPara: Char[] = [];
+    chars.forEach((char, i) => {
+      charsInNewPara.push(char);
+
+      if (char.char === '\n' || i === chars.length - 1) {
+        this.paragraphs.push(
+          new Paragraph(charsInNewPara, this, editor.left + editor.paddingLeft, editor.top, editor.width - editor.paddingLeft)
+        );
+        charsInNewPara = [];
+      }
+    });
+
+    this.paragraphs.forEach((para, i) => {
+      const prevPara = this.paragraphs[i - 1] || null;
+      if (prevPara != null) {
+        para.top = prevPara.top + prevPara.height;
+      }
+      para.calcLayout();
+    });
+  }
+
+  deleteCharBeforeCursor() {
+    if (this.blinkingCursor.isShow) {
+      if (this.cursorIdxInChars === 0) return;
+      const deletingIndex = this.cursorIdxInChars - 1;
+      const deletingChar = this.chars[deletingIndex];
+
+      deletingChar.moveCursorToMyLeft();
+      this.chars.splice(deletingIndex, 1);
+      this.splitCharsIntoParagraphs();
+    }
   }
 }

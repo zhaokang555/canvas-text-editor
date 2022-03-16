@@ -37,7 +37,7 @@ export class CanvasTextEditor implements IRenderable {
     Object.entries(options).forEach(([key, value]) => this[key] = value);
     const canvas = container.querySelector('canvas') as HTMLCanvasElement;
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    this.store = new Store(ctx, container);
+    this.store = new Store(ctx, container, this);
     this.blankSpace = new MouseDownUpClickZone(
       this.left,
       this.top,
@@ -83,29 +83,27 @@ export class CanvasTextEditor implements IRenderable {
   };
 
   private initParagraphs() {
-    const chars = [
-      new Char('/', this.store, {color: 'red', fontSize: 80}),
-      new Char('t', this.store, {color: 'orange', fontSize: 80}),
-      new Char('h', this.store, {color: '#dd0', fontSize: 80}),
-      new Char('o', this.store, {color: 'green', fontSize: 80}),
-      new Char('u', this.store, {color: 'lightblue', fontSize: 80}),
-      new Char('g', this.store, {color: 'blue', fontSize: 80}),
-      new Char('h', this.store, {color: 'purple', fontSize: 80}),
-      new Char('t', this.store, {color: 'red', fontSize: 80}),
-      new Char('w', this.store, {color: 'orange', fontSize: 80}),
-      new Char('o', this.store, {color: '#dd0', fontSize: 80}),
-      new Char('r', this.store, {color: 'green', fontSize: 80}),
-      new Char('k', this.store, {color: 'lightblue', fontSize: 80}),
-      new Char('s', this.store, {color: 'blue', fontSize: 80}),
-      new Char('思', this.store, {color: 'purple', fontSize: 80}),
-      new Char('特', this.store, {color: 'red', fontSize: 80}),
-      new Char('沃', this.store, {color: 'orange', fontSize: 80}),
-      new Char('克', this.store, {color: '#dd0', fontSize: 80}),
+    this.store.chars = [
+      new Char('/', this.store, {color: 'red', fontSize: 70}),
+      new Char('t', this.store, {color: 'orange', fontSize: 70}),
+      new Char('h', this.store, {color: '#dd0', fontSize: 70}),
+      new Char('o', this.store, {color: 'green', fontSize: 70}),
+      new Char('u', this.store, {color: 'lightblue', fontSize: 70}),
+      new Char('g', this.store, {color: 'blue', fontSize: 70}),
+      new Char('h', this.store, {color: 'purple', fontSize: 70}),
+      new Char('t', this.store, {color: 'red', fontSize: 70}),
+      new Char('w', this.store, {color: 'orange', fontSize: 70}),
+      new Char('o', this.store, {color: '#dd0', fontSize: 70}),
+      new Char('r', this.store, {color: 'green', fontSize: 70}),
+      new Char('k', this.store, {color: 'lightblue', fontSize: 70}),
+      new Char('s', this.store, {color: 'blue', fontSize: 70}),
+      new Char('\n', this.store),
+      new Char('思', this.store, {color: 'purple', fontSize: 70}),
+      new Char('特', this.store, {color: 'red', fontSize: 70}),
+      new Char('沃', this.store, {color: 'orange', fontSize: 70}),
+      new Char('克', this.store, {color: '#dd0', fontSize: 70}),
     ];
-    this.store.paragraphs = [
-      new Paragraph(chars, this.store, this.left + this.paddingLeft, this.top, this.width - this.paddingLeft),
-    ];
-    this.store.chars.push(...chars);
+    this.store.splitCharsIntoParagraphs();
   }
 
   private initBorder() {
@@ -206,7 +204,7 @@ export class CanvasTextEditor implements IRenderable {
     let nearestHorizontalDistance = mouseX - nearestChar.left;
     for (let char of nearestSoftLine.chars) {
       const curCharHorizontalDistance = mouseX - char.left;
-      if (curCharHorizontalDistance >= 0 && curCharHorizontalDistance < nearestHorizontalDistance) {
+      if (curCharHorizontalDistance >= 0 && curCharHorizontalDistance < nearestHorizontalDistance && char.char !== '\n') {
         nearestChar = char;
         nearestHorizontalDistance = curCharHorizontalDistance;
       }

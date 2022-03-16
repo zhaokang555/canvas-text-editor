@@ -4,8 +4,11 @@ import Char from '../CanvasTextEditorChar';
 import CompositionChar from '../CanvasTextEditorCompositionChar';
 
 const {round} = Math;
-
 const duration = 1000;
+
+enum KeyboardEventKey {
+  Backspace = 'Backspace',
+}
 
 export default class BlinkingCursor implements IRenderable {
   height = 50;
@@ -13,6 +16,7 @@ export default class BlinkingCursor implements IRenderable {
   input: HTMLInputElement;
   color = '#000';
   fontSize = 50;
+  isShow = false;
 
   get left() {
     return this._left;
@@ -32,7 +36,6 @@ export default class BlinkingCursor implements IRenderable {
 
   private _left = -Infinity;
   private _top = -Infinity;
-  private isShow = false;
 
   constructor(private store: Store) {
     const {container} = this.store;
@@ -61,7 +64,18 @@ export default class BlinkingCursor implements IRenderable {
           }
         }
       });
-      input.addEventListener('compositionend', () => this.store.fixTempCompositionChar());
+      input.addEventListener('keydown', (evt) => {
+        if (evt.key === KeyboardEventKey.Backspace && !this.store.isComposition) {
+          this.store.deleteCharBeforeCursor();
+        }
+      });
+      input.addEventListener('compositionstart', () => {
+        this.store.isComposition = true;
+      });
+      input.addEventListener('compositionend', () => {
+        this.store.isComposition = false;
+        this.store.fixTempCompositionChar();
+      });
     }
     this.input = input;
   }

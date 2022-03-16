@@ -24,14 +24,14 @@ export default class CanvasTextEditorChar implements IRenderable {
   selectableZone: SelectableZone;
 
   constructor(
-    private char: string,
+    public char: string,
     private store: Store,
     options: IOptions = {}
   ) {
     // @ts-ignore
     Object.entries(options).forEach(([key, value]) => this[key] = value);
     this.setStyle();
-    this.textMetrics = store.ctx.measureText(char);
+    this.textMetrics = store.ctx.measureText(char === '\n' ? '' : char);
     const width = this.textMetrics.width;
     const height = this.textMetrics.fontBoundingBoxDescent + this.textMetrics.fontBoundingBoxAscent;
 
