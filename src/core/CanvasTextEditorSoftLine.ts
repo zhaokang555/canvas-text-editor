@@ -12,9 +12,17 @@ export default class CanvasTextEditorSoftLine {
   ) {
     this.offsetY = Math.max(...this.chars.map(char => char.textMetrics.fontBoundingBoxAscent));
     this.calcLayoutForChars();
-    this.chars.forEach((char, i) => {
-      char.prev = this.chars[i - 1] || null;
-    });
+  }
+
+  getFirstNonCtrlChar() {
+    if (this.chars[0]) {
+      if (this.chars[0].char !== '\n') {
+        return this.chars[0];
+      } else {
+        return this.chars[1] || null;
+      }
+    }
+    return null;
   }
 
   private calcLayoutForChars = () => {

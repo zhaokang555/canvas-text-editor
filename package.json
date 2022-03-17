@@ -7,11 +7,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "lodash": "^4.17.21",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "victor": "^1.1.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.180",
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",
     "@types/victor": "^1.1.0",

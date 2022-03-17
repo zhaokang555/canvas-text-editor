@@ -17,7 +17,6 @@ export default class CanvasTextEditorChar implements IRenderable {
   top = 0;
   color = '#000';
   fontSize = 50;
-  prev: CanvasTextEditorChar | null = null;
   boundingBox: HoverableZone;
   leftHalf: MouseDownUpClickZone;
   rightHalf: MouseDownUpClickZone;
@@ -97,30 +96,23 @@ export default class CanvasTextEditorChar implements IRenderable {
   }
 
   public moveCursorToMyLeft = () => {
-    if (this.prev) {
-      this.store.blinkingCursor.left = this.prev.rightHalf.left + this.prev.rightHalf.width;
-      this.store.blinkingCursor.top = this.prev.rightHalf.top;
-      this.store.blinkingCursor.height = this.prev.fontSize;
-      this.store.blinkingCursor.color = this.prev.color;
-      this.store.blinkingCursor.fontSize = this.prev.fontSize;
+    const {blinkingCursor} = this.store;
+    const prevCharInSoftLine = this.store.getPrevCharInSoftLine(this);
+
+    if (prevCharInSoftLine) {
+      blinkingCursor.left = prevCharInSoftLine.rightHalf.left + prevCharInSoftLine.rightHalf.width;
+      blinkingCursor.top = prevCharInSoftLine.rightHalf.top;
+      blinkingCursor.height = prevCharInSoftLine.fontSize;
+      blinkingCursor.color = prevCharInSoftLine.color;
+      blinkingCursor.fontSize = prevCharInSoftLine.fontSize;
     } else {
-      this.store.blinkingCursor.left = this.leftHalf.left;
-      this.store.blinkingCursor.top = this.leftHalf.top;
-      this.store.blinkingCursor.height = this.fontSize;
-      this.store.blinkingCursor.color = this.color;
-      this.store.blinkingCursor.fontSize = this.fontSize;
+      blinkingCursor.left = this.leftHalf.left;
+      blinkingCursor.top = this.leftHalf.top;
+      blinkingCursor.height = this.fontSize;
+      blinkingCursor.color = this.color;
+      blinkingCursor.fontSize = this.fontSize;
     }
-
-    this.store.paragraphs.forEach((p, i) => {
-      const charIndexInP = p.chars.indexOf(this);
-      if (charIndexInP > -1) {
-        this.store.curParaIdx = i;
-
-        this.store.cursorIdxInCurPara = charIndexInP;
-        if (this.store.cursorIdxInCurPara < 0) this.store.cursorIdxInCurPara = 0;
-      }
-    });
-    this.store.cursorIdxInChars = this.store.chars.indexOf(this);
+    this.store.charUnderCursor = this;
   };
 
   public moveCursorToMyRight = () => {
@@ -129,17 +121,7 @@ export default class CanvasTextEditorChar implements IRenderable {
     this.store.blinkingCursor.height = this.fontSize;
     this.store.blinkingCursor.color = this.color;
     this.store.blinkingCursor.fontSize = this.fontSize;
-
-    this.store.paragraphs.forEach((p, i) => {
-      const charIndexInP = p.chars.indexOf(this);
-      if (charIndexInP > -1) {
-        this.store.curParaIdx = i;
-
-        this.store.cursorIdxInCurPara = charIndexInP + 1;
-      }
-    });
-    const charIndex = this.store.chars.indexOf(this);
-    this.store.cursorIdxInChars = charIndex + 1;
+    this.store.charUnderCursor = this.store.getNextChar(this);
   };
 
   public handleClickLeft = () => {

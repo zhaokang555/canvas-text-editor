@@ -97,7 +97,7 @@ export class CanvasTextEditor implements IRenderable {
       new Char('r', this.store, {color: 'green', fontSize: 70}),
       new Char('k', this.store, {color: 'lightblue', fontSize: 70}),
       new Char('s', this.store, {color: 'blue', fontSize: 70}),
-      new Char('\n', this.store),
+      new Char('\n', this.store, {color: 'purple', fontSize: 70}),
       new Char('思', this.store, {color: 'purple', fontSize: 70}),
       new Char('特', this.store, {color: 'red', fontSize: 70}),
       new Char('沃', this.store, {color: 'orange', fontSize: 70}),
@@ -196,9 +196,12 @@ export class CanvasTextEditor implements IRenderable {
     if (nearestSoftLine == null) return returnValue;
 
     // 2. 在此行内找到距离点击位置最近的字符
-    if (mouseX <= nearestSoftLine.chars[0].left) { // handle click on paddingLeft
-      returnValue.char = nearestSoftLine.chars[0];
-      return returnValue;
+    if (mouseX <= nearestSoftLine.left) { // handle click on paddingLeft
+      const firstNonCtrlChar = nearestSoftLine.getFirstNonCtrlChar();
+      if (firstNonCtrlChar) {
+        returnValue.char = firstNonCtrlChar;
+        return returnValue;
+      }
     }
     let nearestChar: Char = nearestSoftLine.chars[0];
     let nearestHorizontalDistance = mouseX - nearestChar.left;

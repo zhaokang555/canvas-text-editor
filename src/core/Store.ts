@@ -4,14 +4,14 @@ import BlinkingCursor from './mouse/BlinkingCursor';
 import Paragraph from './CanvasTextEditorParagraph';
 import CompositionChar from './CanvasTextEditorCompositionChar';
 import { CanvasTextEditor as Editor } from './CanvasTextEditor';
+import SoftLine from './CanvasTextEditorSoftLine';
+import _ from 'lodash';
 
 export default class Store {
   chars = [] as Char[];
   paragraphs: Paragraph[] = [];
   blinkingCursor: BlinkingCursor;
-  cursorIdxInChars = 0;
-  curParaIdx = 0;
-  cursorIdxInCurPara = 0;
+  charUnderCursor: Char | null = null; // null means cursor at end
   isComposition = false;
 
   mouse = {
@@ -77,25 +77,31 @@ export default class Store {
   }
 
   insertChar(char: Char) {
-    this.chars.splice(this.cursorIdxInChars, 0, char);
+    this.chars.splice(this.getCursorIdx(), 0, char);
     this.splitCharsIntoParagraphs();
     char.moveCursorToMyRight();
   }
 
   insertChars(chars: CompositionChar[]) {
-    this.chars.splice(this.cursorIdxInChars, 0, ...chars);
+    this.chars.splice(this.getCursorIdx(), 0, ...chars);
     this.splitCharsIntoParagraphs();
     chars[chars.length - 1].moveCursorToMyRight();
   }
 
   clearTempCompositionChars() {
     const isTempCompositionChar = (char: Char) => char instanceof CompositionChar && char.isTemp;
-    const firstTempCompositionChar = this.chars.find(isTempCompositionChar);
+    const lastTempCompositionChar: Char | undefined = _.findLast(this.chars, isTempCompositionChar);
 
-    if (firstTempCompositionChar) {
-      firstTempCompositionChar.moveCursorToMyLeft();
+    if (lastTempCompositionChar) {
+      const firstCharAfterTempCompositionChars = this.getNextChar(lastTempCompositionChar);
       this.chars = this.chars.filter(char => !isTempCompositionChar(char));
       this.splitCharsIntoParagraphs();
+
+      if (firstCharAfterTempCompositionChars) {
+        firstCharAfterTempCompositionChars.moveCursorToMyLeft();
+      } else {
+        this.moveCursorToEnd();
+      }
     }
   }
 
@@ -113,13 +119,15 @@ export default class Store {
 
     let charsInNewPara: Char[] = [];
     chars.forEach((char, i) => {
+      if (char.char === '\n') {
+        this.paragraphs.push(new Paragraph(charsInNewPara, this, editor.left + editor.paddingLeft, editor.top, editor.width - editor.paddingLeft));
+        charsInNewPara = [];
+      }
+
       charsInNewPara.push(char);
 
-      if (char.char === '\n' || i === chars.length - 1) {
-        this.paragraphs.push(
-          new Paragraph(charsInNewPara, this, editor.left + editor.paddingLeft, editor.top, editor.width - editor.paddingLeft)
-        );
-        charsInNewPara = [];
+      if (i === chars.length - 1) {
+        this.paragraphs.push(new Paragraph(charsInNewPara, this, editor.left + editor.paddingLeft, editor.top, editor.width - editor.paddingLeft));
       }
     });
 
@@ -134,13 +142,72 @@ export default class Store {
 
   deleteCharBeforeCursor() {
     if (this.blinkingCursor.isShow) {
-      if (this.cursorIdxInChars === 0) return;
-      const deletingIndex = this.cursorIdxInChars - 1;
-      const deletingChar = this.chars[deletingIndex];
+      const deletingChar = this.getPrevChar(this.charUnderCursor);
+      if (!deletingChar) return;
 
-      deletingChar.moveCursorToMyLeft();
-      this.chars.splice(deletingIndex, 1);
+      this.chars = this.chars.filter(c => c !== deletingChar);
       this.splitCharsIntoParagraphs();
+      if (this.charUnderCursor) {
+        const prevChar = this.getPrevChar(this.charUnderCursor);
+        if (prevChar) {
+          prevChar.moveCursorToMyRight();
+        } else { // cursor at the beginning
+          this.charUnderCursor.moveCursorToMyLeft();
+        }
+      } else {
+        this.moveCursorToEnd();
+      }
+    }
+  }
+
+  getPrevCharInSoftLine(char: Char) {
+    let curSoftLine: SoftLine | null = null;
+    for (const para of this.paragraphs) {
+      for (const softLine of para.softLines) {
+        if (softLine.chars.includes(char)) {
+          curSoftLine = softLine;
+        }
+      }
+    }
+
+    if (curSoftLine != null) {
+      const i = curSoftLine.chars.indexOf(char);
+      const prevChar = curSoftLine.chars[i - 1];
+      if (prevChar != null) {
+        return prevChar;
+      }
+    }
+    return null;
+  }
+
+  getCursorIdx() {
+    if (this.charUnderCursor != null) {
+      return this.chars.indexOf(this.charUnderCursor);
+    }
+    return this.chars.length; // cursor at end
+  }
+
+  getPrevChar(char: Char | null) {
+    if (!char) return this.chars[this.chars.length - 1];
+    const i = this.chars.indexOf(char);
+    const prevChar = this.chars[i - 1];
+    if (prevChar) return prevChar;
+    return null;
+  }
+
+  getNextChar(char: Char | null) {
+    if (!char) return null;
+    const i = this.chars.indexOf(char);
+    const nextChar = this.chars[i + 1];
+    if (nextChar) return nextChar;
+    return null;
+  }
+
+  moveCursorToEnd() {
+    if (this.chars.length > 0) {
+      this.chars[this.chars.length - 1].moveCursorToMyRight();
+    } else {
+      this.blinkingCursor.left = this.editor.left + this.editor.paddingLeft;
     }
   }
 }

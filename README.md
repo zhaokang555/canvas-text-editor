@@ -11,8 +11,9 @@ https://zhaokang555.github.io/canvas-text-editor/
 ## Features
 
 - [x] Blinking cursor
-- [x] Input text
 - [x] Select text
+- [x] Input text
+- [ ] Press Enter to add a new paragraph
 - [ ] Delete text
 - [ ] Replace text
 - [ ] Copy
