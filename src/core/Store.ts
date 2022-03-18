@@ -90,11 +90,12 @@ export default class Store {
 
   clearTempCompositionChars() {
     const isTempCompositionChar = (char: Char) => char instanceof CompositionChar && char.isTemp;
-    const lastTempCompositionChar: Char | undefined = _.findLast(this.chars, isTempCompositionChar);
+    const charsToBeDeleted: Char[] = this.chars.filter(isTempCompositionChar);
 
-    if (lastTempCompositionChar) {
-      const firstCharAfterTempCompositionChars = this.getNextChar(lastTempCompositionChar);
+    if (charsToBeDeleted.length > 0) {
+      const firstCharAfterTempCompositionChars = this.getNextChar(_.last(charsToBeDeleted) as Char);
       this.chars = this.chars.filter(char => !isTempCompositionChar(char));
+      charsToBeDeleted.forEach(c => c.destructor());
       this.splitCharsIntoParagraphs();
 
       if (firstCharAfterTempCompositionChars) {
@@ -146,6 +147,7 @@ export default class Store {
       if (!deletingChar) return;
 
       this.chars = this.chars.filter(c => c !== deletingChar);
+      deletingChar.destructor();
       this.splitCharsIntoParagraphs();
       if (this.charUnderCursor) {
         const prevChar = this.getPrevChar(this.charUnderCursor);
