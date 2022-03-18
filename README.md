@@ -14,7 +14,7 @@ https://zhaokang555.github.io/canvas-text-editor/
 - [x] Select text
 - [x] Input text
 - [ ] Press Enter to add a new paragraph
-- [ ] Delete text
+- [x] Delete text
 - [ ] Replace text
 - [ ] Copy
 - [ ] Paste
@@ -39,4 +39,4 @@ Then open `http://localhost:3000/canvas-text-editor/`.
 
 知乎专栏：[《从零开始, 开发一个 Web Office 套件》](https://www.zhihu.com/column/c_1483016910866931712)
 
-Medium 专栏：[《Developing a Web Office suite from scratch》](https://medium.com/@forzhaokang/list/developing-a-web-office-suite-from-scratch-6f3c5735fc66)
+Medium List：[《Developing a Web Office suite from scratch》](https://medium.com/@forzhaokang/list/developing-a-web-office-suite-from-scratch-6f3c5735fc66)
