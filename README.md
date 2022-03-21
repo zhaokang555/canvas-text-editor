@@ -12,12 +12,14 @@ https://zhaokang555.github.io/canvas-text-editor/
 
 - [x] Blinking cursor
 - [x] Select text
+- [ ] Real-time highlighting of selected text while dragging the mouse
 - [x] Input text
 - [x] Press Enter to add a new paragraph
 - [x] Delete text
 - [ ] Replace text
 - [ ] Copy
 - [ ] Paste
+- [ ] Undo / Redo
 - [ ] Resize editor
 - [ ] Multiple editors in one Canvas
 - [ ] Serialization / Deserialization
