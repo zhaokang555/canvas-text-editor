@@ -1,4 +1,3 @@
-import Paragraph from './CanvasTextEditorParagraph';
 import Char from './CanvasTextEditorChar';
 import IRenderable from './IRenderable';
 import { SizeControlPoint } from './SizeControlPoint';
@@ -84,24 +83,24 @@ export class CanvasTextEditor implements IRenderable {
 
   private initParagraphs() {
     this.store.chars = [
-      new Char('/', this.store, {color: 'red', fontSize: 70}),
-      new Char('t', this.store, {color: 'orange', fontSize: 70}),
-      new Char('h', this.store, {color: '#dd0', fontSize: 70}),
-      new Char('o', this.store, {color: 'green', fontSize: 70}),
-      new Char('u', this.store, {color: 'lightblue', fontSize: 70}),
-      new Char('g', this.store, {color: 'blue', fontSize: 70}),
-      new Char('h', this.store, {color: 'purple', fontSize: 70}),
-      new Char('t', this.store, {color: 'red', fontSize: 70}),
-      new Char('w', this.store, {color: 'orange', fontSize: 70}),
-      new Char('o', this.store, {color: '#dd0', fontSize: 70}),
-      new Char('r', this.store, {color: 'green', fontSize: 70}),
-      new Char('k', this.store, {color: 'lightblue', fontSize: 70}),
-      new Char('s', this.store, {color: 'blue', fontSize: 70}),
-      new Char('\n', this.store, {color: 'purple', fontSize: 70}),
-      new Char('思', this.store, {color: 'purple', fontSize: 70}),
-      new Char('特', this.store, {color: 'red', fontSize: 70}),
-      new Char('沃', this.store, {color: 'orange', fontSize: 70}),
-      new Char('克', this.store, {color: '#dd0', fontSize: 70}),
+      new Char('/', this.store, {color: 'red', fontSize: 48}),
+      new Char('t', this.store, {color: 'orange', fontSize: 48}),
+      new Char('h', this.store, {color: '#dd0', fontSize: 48}),
+      new Char('o', this.store, {color: 'green', fontSize: 48}),
+      new Char('u', this.store, {color: 'lightblue', fontSize: 48}),
+      new Char('g', this.store, {color: 'blue', fontSize: 48}),
+      new Char('h', this.store, {color: 'purple', fontSize: 48}),
+      new Char('t', this.store, {color: 'red', fontSize: 48}),
+      new Char('w', this.store, {color: 'orange', fontSize: 48}),
+      new Char('o', this.store, {color: '#dd0', fontSize: 48}),
+      new Char('r', this.store, {color: 'green', fontSize: 48}),
+      new Char('k', this.store, {color: 'lightblue', fontSize: 48}),
+      new Char('s', this.store, {color: 'blue', fontSize: 48}),
+      new Char('\n', this.store, {color: 'purple', fontSize: 48}),
+      new Char('思', this.store, {color: 'purple', fontSize: 48}),
+      new Char('特', this.store, {color: 'red', fontSize: 48}),
+      new Char('沃', this.store, {color: 'orange', fontSize: 48}),
+      new Char('克', this.store, {color: '#dd0', fontSize: 48}),
     ];
     this.store.splitCharsIntoParagraphs();
   }

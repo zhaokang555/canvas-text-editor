@@ -13,7 +13,7 @@ https://zhaokang555.github.io/canvas-text-editor/
 - [x] Blinking cursor
 - [x] Select text
 - [x] Input text
-- [ ] Press Enter to add a new paragraph
+- [x] Press Enter to add a new paragraph
 - [x] Delete text
 - [ ] Replace text
 - [ ] Copy

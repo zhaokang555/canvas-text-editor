@@ -8,6 +8,7 @@ const duration = 1000;
 
 enum KeyboardEventKey {
   Backspace = 'Backspace',
+  Enter = 'Enter',
 }
 
 export default class BlinkingCursor implements IRenderable {
@@ -65,8 +66,16 @@ export default class BlinkingCursor implements IRenderable {
         }
       });
       input.addEventListener('keydown', (evt) => {
-        if (evt.key === KeyboardEventKey.Backspace && !this.store.isComposition) {
-          this.store.deleteCharBeforeCursor();
+        if (this.store.isComposition) return;
+
+        switch (evt.key) {
+          case KeyboardEventKey.Backspace:
+            this.store.deleteCharBeforeCursor();
+            break;
+          case KeyboardEventKey.Enter:
+            const char = new Char('\n', store, {color: this.color, fontSize: this.fontSize});
+            this.store.insertChar(char);
+            break;
         }
       });
       input.addEventListener('compositionstart', () => {
