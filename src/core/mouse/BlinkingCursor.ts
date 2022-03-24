@@ -51,6 +51,9 @@ export default class BlinkingCursor implements IRenderable {
       container.appendChild(input);
       input.addEventListener('input', evt => {
         const inputEvent = evt as InputEvent;
+        if (this.store.hasSelectedText()) {
+          this.store.deleteSelectedChars();
+        }
         if (inputEvent.inputType === 'insertText' && inputEvent.data != null) {
           const char = new Char(inputEvent.data, store, {color: this.color, fontSize: this.fontSize});
           this.store.insertChar(char);
@@ -70,7 +73,11 @@ export default class BlinkingCursor implements IRenderable {
 
         switch (evt.key) {
           case KeyboardEventKey.Backspace:
-            this.store.deleteCharBeforeCursor();
+            if (this.isShow) {
+              this.store.deleteCharBeforeCursor();
+            } else if (this.store.hasSelectedText()) {
+              this.store.deleteSelectedChars();
+            }
             break;
           case KeyboardEventKey.Enter:
             const char = new Char('\n', store, {color: this.color, fontSize: this.fontSize});
@@ -92,19 +99,19 @@ export default class BlinkingCursor implements IRenderable {
   show() {
     this.isShow = true;
     this.startBlinkingTimestamp = Date.now();
-    if (document.activeElement !== this.input) {
-      this.input.focus();
-    }
   }
 
   hide() {
     this.isShow = false;
-    this.input.blur();
+    // this.input.blur();
     this.input.value = '';
   }
 
   checkShouldShow() {
-    if (this.store.hasSelectText()) {
+    if (document.activeElement !== this.input) {
+      this.input.focus();
+    }
+    if (this.store.hasSelectedText()) {
       this.hide();
     } else {
       this.show();

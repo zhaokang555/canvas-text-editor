@@ -72,8 +72,33 @@ export default class Store {
     });
   }
 
-  hasSelectText() {
+  hasSelectedText() {
     return this.chars.some(char => char.selectableZone.isSelected);
+  }
+
+  deleteSelectedChars() {
+    const selectedChars = this.chars.filter(char => char.selectableZone.isSelected);
+    if (selectedChars.length > 0) {
+      const firstCharAfterSelectedChars = this.getNextChar(_.last(selectedChars));
+      const lastCharBeforeSelectedChars = this.getPrevChar(_.first(selectedChars));
+      this.chars = this.chars.filter(char => !char.selectableZone.isSelected);
+      selectedChars.forEach(char => char.destructor());
+      this.splitCharsIntoParagraphs();
+      this.blinkingCursor.isShow = true;
+      if (firstCharAfterSelectedChars) {
+        if (firstCharAfterSelectedChars.char !== '\n') {
+          firstCharAfterSelectedChars.moveCursorToMyLeft();
+        } else {
+          if (lastCharBeforeSelectedChars) {
+            lastCharBeforeSelectedChars.moveCursorToMyRight();
+          } else {
+            this.moveCursorToStart();
+          }
+        }
+      } else {
+        this.moveCursorToEnd();
+      }
+    }
   }
 
   insertChar(char: Char) {
@@ -93,7 +118,7 @@ export default class Store {
     const charsToBeDeleted: Char[] = this.chars.filter(isTempCompositionChar);
 
     if (charsToBeDeleted.length > 0) {
-      const firstCharAfterTempCompositionChars = this.getNextChar(_.last(charsToBeDeleted) as Char);
+      const firstCharAfterTempCompositionChars = this.getNextChar(_.last(charsToBeDeleted));
       this.chars = this.chars.filter(char => !isTempCompositionChar(char));
       charsToBeDeleted.forEach(c => c.destructor());
       this.splitCharsIntoParagraphs();
@@ -142,23 +167,21 @@ export default class Store {
   }
 
   deleteCharBeforeCursor() {
-    if (this.blinkingCursor.isShow) {
-      const deletingChar = this.getPrevChar(this.charUnderCursor);
-      if (!deletingChar) return;
+    const deletingChar = this.getPrevChar(this.charUnderCursor);
+    if (!deletingChar) return;
 
-      this.chars = this.chars.filter(c => c !== deletingChar);
-      deletingChar.destructor();
-      this.splitCharsIntoParagraphs();
-      if (this.charUnderCursor) {
-        const prevChar = this.getPrevChar(this.charUnderCursor);
-        if (prevChar) {
-          prevChar.moveCursorToMyRight();
-        } else { // cursor at the beginning
-          this.charUnderCursor.moveCursorToMyLeft();
-        }
-      } else {
-        this.moveCursorToEnd();
+    this.chars = this.chars.filter(c => c !== deletingChar);
+    deletingChar.destructor();
+    this.splitCharsIntoParagraphs();
+    if (this.charUnderCursor) {
+      const prevChar = this.getPrevChar(this.charUnderCursor);
+      if (prevChar) {
+        prevChar.moveCursorToMyRight();
+      } else { // cursor at the beginning
+        this.charUnderCursor.moveCursorToMyLeft();
       }
+    } else {
+      this.moveCursorToEnd();
     }
   }
 
@@ -189,16 +212,16 @@ export default class Store {
     return this.chars.length; // cursor at end
   }
 
-  getPrevChar(char: Char | null) {
-    if (!char) return this.chars[this.chars.length - 1];
+  getPrevChar(char: Char | null = null) {
+    if (char == null) return this.chars[this.chars.length - 1];
     const i = this.chars.indexOf(char);
     const prevChar = this.chars[i - 1];
     if (prevChar) return prevChar;
     return null;
   }
 
-  getNextChar(char: Char | null) {
-    if (!char) return null;
+  getNextChar(char: Char | null = null) {
+    if (char == null) return null;
     const i = this.chars.indexOf(char);
     const nextChar = this.chars[i + 1];
     if (nextChar) return nextChar;
@@ -208,6 +231,14 @@ export default class Store {
   moveCursorToEnd() {
     if (this.chars.length > 0) {
       this.chars[this.chars.length - 1].moveCursorToMyRight();
+    } else {
+      this.blinkingCursor.left = this.editor.left + this.editor.paddingLeft;
+    }
+  }
+
+  moveCursorToStart() {
+    if (this.chars.length > 0) {
+      this.chars[0].moveCursorToMyLeft();
     } else {
       this.blinkingCursor.left = this.editor.left + this.editor.paddingLeft;
     }
