@@ -107,7 +107,7 @@ export default class Store {
     char.moveCursorToMyRight();
   }
 
-  insertChars(chars: CompositionChar[]) {
+  insertChars(chars: Char[]) {
     this.chars.splice(this.getCursorIdx(), 0, ...chars);
     this.splitCharsIntoParagraphs();
     chars[chars.length - 1].moveCursorToMyRight();
@@ -249,6 +249,18 @@ export default class Store {
       this.chars.filter(char => char.selectableZone.isSelected).map(char => char.char).join('')
     ).catch((err) => {
       console.log('copy failed:', err);
+    });
+  }
+
+  paste() {
+    return window.navigator.clipboard.readText().then(text => {
+      if (text.length > 0) {
+        const {color, fontSize} = this.blinkingCursor;
+        const chars = text.split('').map(char => new Char(char, this, {color, fontSize}));
+        this.insertChars(chars);
+      }
+    }).catch((err) => {
+      console.log('paste failed:', err);
     });
   }
 }
