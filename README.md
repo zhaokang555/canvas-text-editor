@@ -16,7 +16,7 @@ https://zhaokang555.github.io/canvas-text-editor/
 - [x] Press Enter to add a new paragraph
 - [x] Delete text
 - [x] Replace text
-- [x] Copy / Paste
+- [x] Copy / Paste / Cut
 - [ ] Select all
 - [ ] Double-click to select the current line
 - [ ] Undo / Redo

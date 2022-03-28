@@ -130,7 +130,7 @@ export default class BlinkingCursor implements IRenderable {
     }
   };
 
-  private onKeyDown = (evt: KeyboardEvent) => {
+  private onKeyDown = async (evt: KeyboardEvent) => {
     if (this.store.isComposition) return;
 
     switch (evt.key) {
@@ -147,12 +147,18 @@ export default class BlinkingCursor implements IRenderable {
         break;
       case 'c':
         if (isCtrlOrCmdPressed(evt)) {
-          this.store.copySelectedChars();
+          await this.store.copySelectedChars();
         }
         break;
       case 'v':
         if (isCtrlOrCmdPressed(evt)) {
-          this.store.paste();
+          await this.store.paste();
+        }
+        break;
+      case 'x':
+        if (isCtrlOrCmdPressed(evt)) {
+          await this.store.copySelectedChars();
+          this.store.deleteSelectedChars();
         }
         break;
       case 'a':
