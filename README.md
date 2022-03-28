@@ -11,18 +11,20 @@ https://zhaokang555.github.io/canvas-text-editor/
 ## Features
 
 - [x] Blinking cursor
-- [x] Select text
-- [ ] Real-time highlighting of selected text while dragging the mouse
+- [x] Drag to select text
 - [x] Input text
 - [x] Press Enter to add a new paragraph
 - [x] Delete text
 - [x] Replace text
 - [x] Copy / Paste
+- [ ] Select all
+- [ ] Double-click to select the current line
 - [ ] Undo / Redo
 - [ ] Resize editor
 - [ ] Multiple editors in one Canvas
 - [ ] Serialization / Deserialization
 - [ ] Import / Export
+- [ ] Real-time highlighting of selected text while dragging the mouse
 
 ## Environment Setup
 
