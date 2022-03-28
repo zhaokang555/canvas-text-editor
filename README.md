@@ -17,14 +17,14 @@ https://zhaokang555.github.io/canvas-text-editor/
 - [x] Delete text
 - [x] Replace text
 - [x] Copy / Paste / Cut
-- [ ] Select all
-- [ ] Double-click to select the current line
+- [x] Select all
 - [ ] Undo / Redo
 - [ ] Resize editor
 - [ ] Multiple editors in one Canvas
 - [ ] Serialization / Deserialization
 - [ ] Import / Export
 - [ ] Real-time highlighting of selected text while dragging the mouse
+- [ ] Double-click to select the current line
 
 ## Environment Setup
 
