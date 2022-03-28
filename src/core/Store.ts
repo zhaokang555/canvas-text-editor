@@ -243,4 +243,12 @@ export default class Store {
       this.blinkingCursor.left = this.editor.left + this.editor.paddingLeft;
     }
   }
+
+  copySelectedChars() {
+    return window.navigator.clipboard.writeText(
+      this.chars.filter(char => char.selectableZone.isSelected).map(char => char.char).join('')
+    ).catch((err) => {
+      console.log('copy failed:', err);
+    });
+  }
 }

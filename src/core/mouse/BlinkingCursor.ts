@@ -2,6 +2,7 @@ import IRenderable from '../IRenderable';
 import Store from '../Store';
 import Char from '../CanvasTextEditorChar';
 import CompositionChar from '../CanvasTextEditorCompositionChar';
+import { isCtrlOrCmdPressed } from '../Utils';
 
 const {round} = Math;
 const duration = 1000;
@@ -49,51 +50,21 @@ export default class BlinkingCursor implements IRenderable {
       input.style.border = 'none';
       container.style.position = 'relative';
       container.appendChild(input);
-      input.addEventListener('input', evt => {
-        const inputEvent = evt as InputEvent;
-        if (this.store.hasSelectedText()) {
-          this.store.deleteSelectedChars();
-        }
-        if (inputEvent.inputType === 'insertText' && inputEvent.data != null) {
-          const char = new Char(inputEvent.data, store, {color: this.color, fontSize: this.fontSize});
-          this.store.insertChar(char);
-        } else if (inputEvent.inputType === 'insertCompositionText') {
-          this.store.clearTempCompositionChars();
-          if (inputEvent.data != null) {
-            const chars = inputEvent.data.split('').map(char => new CompositionChar(char, store, {
-              color: this.color,
-              fontSize: this.fontSize
-            }));
-            this.store.insertChars(chars);
-          }
-        }
-      });
-      input.addEventListener('keydown', (evt) => {
-        if (this.store.isComposition) return;
-
-        switch (evt.key) {
-          case KeyboardEventKey.Backspace:
-            if (this.isShow) {
-              this.store.deleteCharBeforeCursor();
-            } else if (this.store.hasSelectedText()) {
-              this.store.deleteSelectedChars();
-            }
-            break;
-          case KeyboardEventKey.Enter:
-            const char = new Char('\n', store, {color: this.color, fontSize: this.fontSize});
-            this.store.insertChar(char);
-            break;
-        }
-      });
-      input.addEventListener('compositionstart', () => {
-        this.store.isComposition = true;
-      });
-      input.addEventListener('compositionend', () => {
-        this.store.isComposition = false;
-        this.store.fixTempCompositionChar();
-      });
+      input.addEventListener('input', this.onInput);
+      input.addEventListener('keydown', this.onKeyDown);
+      input.addEventListener('compositionstart', this.onCompositionStart);
+      input.addEventListener('compositionend', this.onCompositionEnd);
     }
     this.input = input;
+  }
+
+  destructor() {
+    if (this.input) {
+      this.input.removeEventListener('input', this.onInput);
+      this.input.removeEventListener('keydown', this.onKeyDown);
+      this.input.removeEventListener('compositionstart', this.onCompositionStart);
+      this.input.removeEventListener('compositionend', this.onCompositionEnd);
+    }
   }
 
   show() {
@@ -138,4 +109,56 @@ export default class BlinkingCursor implements IRenderable {
     this.input.style.top = this.top + 'px';
     this.input.style.height = this.height + 'px';
   }
+
+  private onInput = (evt: Event) => {
+    const inputEvent = evt as InputEvent;
+    if (this.store.hasSelectedText()) {
+      this.store.deleteSelectedChars();
+    }
+    if (inputEvent.inputType === 'insertText' && inputEvent.data != null) {
+      const char = new Char(inputEvent.data, this.store, {color: this.color, fontSize: this.fontSize});
+      this.store.insertChar(char);
+    } else if (inputEvent.inputType === 'insertCompositionText') {
+      this.store.clearTempCompositionChars();
+      if (inputEvent.data != null) {
+        const chars = inputEvent.data.split('').map(char => new CompositionChar(char, this.store, {
+          color: this.color,
+          fontSize: this.fontSize
+        }));
+        this.store.insertChars(chars);
+      }
+    }
+  };
+
+  private onKeyDown = (evt: KeyboardEvent) => {
+    if (this.store.isComposition) return;
+
+    switch (evt.key) {
+      case KeyboardEventKey.Backspace:
+        if (this.isShow) {
+          this.store.deleteCharBeforeCursor();
+        } else if (this.store.hasSelectedText()) {
+          this.store.deleteSelectedChars();
+        }
+        break;
+      case KeyboardEventKey.Enter:
+        const char = new Char('\n', this.store, {color: this.color, fontSize: this.fontSize});
+        this.store.insertChar(char);
+        break;
+      case 'c':
+        if (isCtrlOrCmdPressed(evt)) {
+          this.store.copySelectedChars();
+        }
+        break;
+    }
+  };
+
+  private onCompositionStart = (evt: CompositionEvent) => {
+    this.store.isComposition = true;
+  };
+
+  private onCompositionEnd = (evt: CompositionEvent) => {
+    this.store.isComposition = false;
+    this.store.fixTempCompositionChar();
+  };
 }
