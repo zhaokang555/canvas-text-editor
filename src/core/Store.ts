@@ -43,6 +43,18 @@ export default class Store {
     this.chars.forEach(char => char.selectableZone.isSelected = false);
   }
 
+  selectAllChars() {
+    if (this.chars.length > 0) {
+      this.clearSelect();
+      this.mouse.select.mousedownChar = this.chars[0];
+      this.mouse.select.isMousedownLeftHalf = true;
+      this.mouse.select.mouseupChar = this.chars[this.chars.length - 1];
+      this.mouse.select.isMouseupLeftHalf = false;
+      this.finishSelect();
+      this.blinkingCursor.checkShouldShow();
+    }
+  }
+
   finishSelect() {
     const {mousedownChar, mouseupChar, isMousedownLeftHalf, isMouseupLeftHalf} = this.mouse.select;
 
@@ -233,6 +245,7 @@ export default class Store {
       this.chars[this.chars.length - 1].moveCursorToMyRight();
     } else {
       this.blinkingCursor.left = this.editor.left + this.editor.paddingLeft;
+      this.blinkingCursor.top = this.editor.top;
     }
   }
 
@@ -241,6 +254,7 @@ export default class Store {
       this.chars[0].moveCursorToMyLeft();
     } else {
       this.blinkingCursor.left = this.editor.left + this.editor.paddingLeft;
+      this.blinkingCursor.top = this.editor.top;
     }
   }
 

@@ -155,6 +155,9 @@ export default class BlinkingCursor implements IRenderable {
           this.store.paste();
         }
         break;
+      case 'a':
+        this.store.selectAllChars();
+        break;
     }
   };
 
