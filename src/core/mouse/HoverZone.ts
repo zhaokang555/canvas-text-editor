@@ -3,11 +3,11 @@ import { IBoundingBox } from '../IBoundingBox';
 import IRenderable from '../IRenderable';
 import Store from '../Store';
 
-export interface IHoverableZoneOptions {
+export interface IHoverZoneOptions {
   zIndex?: number;
 }
 
-export class HoverableZone implements IBoundingBox, IRenderable {
+export class HoverZone implements IBoundingBox, IRenderable {
   public zIndex = 0;
   private isMouseHovering = false;
 
@@ -18,7 +18,7 @@ export class HoverableZone implements IBoundingBox, IRenderable {
     public height: number,
     public cursorType: CursorType,
     protected store: Store,
-    options: IHoverableZoneOptions = {},
+    options: IHoverZoneOptions = {},
   ) {
     // @ts-ignore
     Object.entries(options).forEach(([key, value]) => this[key] = value);
@@ -30,17 +30,27 @@ export class HoverableZone implements IBoundingBox, IRenderable {
   }
 
   render() {
+    // this.store.ctx.strokeStyle = 'red';
+    // this.store.ctx.strokeRect(this.left, this.top, this.width, this.height);
+    // this.store.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    // this.store.ctx.fillRect(this.left, this.top, this.width, this.height);
+
     if (this.isMouseHovering) {
       if (this.zIndex >= this.store.mouse.hover.topLayerZIndex) {
         this.store.mouse.hover.topLayerZIndex = this.zIndex;
         this.store.mouse.hover.topLayerCursorType = this.cursorType;
-
-        // this.ctx.strokeStyle = 'red';
-        // this.ctx.strokeRect(this.left, this.top, this.width, this.height);
-        // this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-        // this.ctx.fillRect(this.left, this.top, this.width, this.height);
       }
     }
+  }
+
+  move(dx: number, dy: number) {
+    this.left += dx;
+    this.top += dy;
+  }
+
+  addWidthHeight(dx: number, dy: number) {
+    this.width += dx;
+    this.height += dy;
   }
 
   private handleMouseMove = (evt: MouseEvent) => {

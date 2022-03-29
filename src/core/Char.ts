@@ -1,7 +1,7 @@
 import IRenderable from './IRenderable';
-import { HoverableZone } from './mouse/HoverableZone';
+import { HoverZone } from './mouse/HoverZone';
 import CursorType from './CursorType';
-import SelectableZone from './mouse/SelectableZone';
+import SelectZone from './mouse/SelectZone';
 import Store from './Store';
 import MouseDownUpClickZone from './mouse/MouseDownUpClickZone';
 
@@ -12,15 +12,15 @@ export interface IOptions {
   fontSize?: number;
 }
 
-export default class CanvasTextEditorChar implements IRenderable {
+export default class Char implements IRenderable {
   textMetrics: TextMetrics;
   top = 0;
   color = '#000';
   fontSize = 50;
-  boundingBox: HoverableZone;
+  boundingBox: HoverZone;
   leftHalf: MouseDownUpClickZone;
   rightHalf: MouseDownUpClickZone;
-  selectableZone: SelectableZone;
+  selectZone: SelectZone;
 
   constructor(
     public char: string,
@@ -34,7 +34,7 @@ export default class CanvasTextEditorChar implements IRenderable {
     const width = this.textMetrics.width;
     const height = this.textMetrics.fontBoundingBoxDescent + this.textMetrics.fontBoundingBoxAscent;
 
-    this.boundingBox = new HoverableZone(-Infinity, -Infinity, width, height, CursorType.text, store, {zIndex: defaultZIndex});
+    this.boundingBox = new HoverZone(-Infinity, -Infinity, width, height, CursorType.text, store, {zIndex: defaultZIndex});
     this.leftHalf = new MouseDownUpClickZone(-Infinity, -Infinity, width / 2, height,
       this.handleClickLeft, this.handleMousedownLeft, this.handleMouseupLeft,
       store, {zIndex: defaultZIndex}
@@ -43,7 +43,7 @@ export default class CanvasTextEditorChar implements IRenderable {
       this.handleClickRight, this.handleMousedownRight, this.handleMouseupRight,
       store, {zIndex: defaultZIndex}
     );
-    this.selectableZone = new SelectableZone(-Infinity, -Infinity, width, height, store);
+    this.selectZone = new SelectZone(-Infinity, -Infinity, width, height, store);
   }
 
   get left() {
@@ -78,13 +78,13 @@ export default class CanvasTextEditorChar implements IRenderable {
     this.leftHalf.setPosition(left, boundingBoxTop);
     this.rightHalf.setPosition(left + this.width / 2, boundingBoxTop);
 
-    this.selectableZone.left = left;
-    this.selectableZone.top = boundingBoxTop;
+    this.selectZone.left = left;
+    this.selectZone.top = boundingBoxTop;
   };
 
   render = () => {
     this.boundingBox.render();
-    this.selectableZone.render();
+    this.selectZone.render();
 
     this.setStyle();
     this.store.ctx.fillText(this.char, this.left, this.top);

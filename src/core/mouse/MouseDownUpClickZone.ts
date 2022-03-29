@@ -1,4 +1,4 @@
-import ClickableZone, { IOptions } from './ClickableZone';
+import ClickZone, { IOptions } from './ClickZone';
 import MousedownZone from './MousedownZone';
 import MouseupZone from './MouseupZone';
 import Store from '../Store';
@@ -8,7 +8,7 @@ export default class MouseDownUpClickZone {
 
   get top() {return this._top;}
 
-  private clickableZone: ClickableZone;
+  private clickZone: ClickZone;
   private mousedownZone: MousedownZone;
   private mouseupZone: MouseupZone;
 
@@ -23,13 +23,13 @@ export default class MouseDownUpClickZone {
     public store: Store,
     options: IOptions = {},
   ) {
-    this.clickableZone = new ClickableZone(_left, _top, width, height, onClick, store, options);
+    this.clickZone = new ClickZone(_left, _top, width, height, onClick, store, options);
     this.mousedownZone = new MousedownZone(_left, _top, width, height, onMousedown, store);
     this.mouseupZone = new MouseupZone(_left, _top, width, height, onMouseup, store);
   }
 
   destructor() {
-    this.clickableZone.destructor();
+    this.clickZone.destructor();
     this.mousedownZone.destructor();
     this.mouseupZone.destructor();
   }
@@ -38,8 +38,8 @@ export default class MouseDownUpClickZone {
     this._left = left;
     this._top = top;
 
-    this.clickableZone.left = left;
-    this.clickableZone.top = top;
+    this.clickZone.left = left;
+    this.clickZone.top = top;
 
     this.mousedownZone.left = left;
     this.mousedownZone.top = top;

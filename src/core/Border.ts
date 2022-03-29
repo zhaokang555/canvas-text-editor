@@ -1,17 +1,28 @@
 import Victor from 'victor';
-import { HoverableZone } from './mouse/HoverableZone';
+import { HoverZone } from './mouse/HoverZone';
 import CursorType from './CursorType';
 import Store from './Store';
+import DragZone from './mouse/DragZone';
 
 const borderColor = '#999';
 const borderWidth = 1;
 const borderResponsiveWidth = 10;
 const defaultZIndex = 100;
 
-export default class CanvasTextEditorBorder extends HoverableZone {
+export enum BorderType {
+  Left = 'Left',
+  Right = 'Right',
+  Top = 'Top',
+  Bottom = 'Bottom',
+}
+
+export default class Border extends HoverZone {
+  dragZone: DragZone;
+
   constructor(
-    public from: Victor,
-    public to: Victor,
+    private from: Victor, // 'from' is to the upper left of 'to'
+    private to: Victor,
+    public type: BorderType,
     store: Store,
   ) {
     const normalVector = to.clone().subtract(from).rotate(Math.PI / 2).normalize();
@@ -31,6 +42,33 @@ export default class CanvasTextEditorBorder extends HoverableZone {
     super(left, top, width, height, CursorType.move, store, {
       zIndex: defaultZIndex,
     });
+
+    this.dragZone = new DragZone(left, top, width, height, this.handleDrag, store);
+  }
+
+  destructor() {
+    super.destructor();
+    this.dragZone.destructor();
+  }
+
+  move(dx: number, dy: number) {
+    super.move(dx, dy);
+    const dVector = new Victor(dx, dy);
+    this.from.add(dVector);
+    this.to.add(dVector);
+    this.dragZone.move(dx, dy);
+  }
+
+  addWidthHeight(dx: number, dy: number) {
+    if (this.type === BorderType.Top || this.type === BorderType.Bottom) {
+      super.addWidthHeight(dx, 0);
+      this.to.addScalarX(dx);
+      this.dragZone.addWidthHeight(dx, 0);
+    } else {
+      super.addWidthHeight(0, dy);
+      this.to.addScalarY(dy);
+      this.dragZone.addWidthHeight(0, dy);
+    }
   }
 
   render() {
@@ -44,4 +82,8 @@ export default class CanvasTextEditorBorder extends HoverableZone {
     this.store.ctx.lineTo(this.to.x, this.to.y);
     this.store.ctx.stroke();
   }
+
+  private handleDrag = (dx: number, dy: number) => {
+    this.store.editor.move(dx, dy);
+  };
 }

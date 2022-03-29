@@ -1,6 +1,6 @@
-import Char from './CanvasTextEditorChar';
+import Char from './Char';
 
-export default class CanvasTextEditorSoftLine {
+export default class SoftLine {
   private offsetY: number;
 
   constructor(

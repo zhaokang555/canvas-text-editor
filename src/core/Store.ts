@@ -1,10 +1,10 @@
 import CursorType from './CursorType';
-import Char from './CanvasTextEditorChar';
+import Char from './Char';
 import BlinkingCursor from './mouse/BlinkingCursor';
-import Paragraph from './CanvasTextEditorParagraph';
-import CompositionChar from './CanvasTextEditorCompositionChar';
+import Paragraph from './Paragraph';
+import CompositionChar from './CompositionChar';
 import { CanvasTextEditor as Editor } from './CanvasTextEditor';
-import SoftLine from './CanvasTextEditorSoftLine';
+import SoftLine from './SoftLine';
 import _ from 'lodash';
 
 export default class Store {
@@ -40,7 +40,7 @@ export default class Store {
     this.mouse.select.mouseupChar = null;
     this.mouse.select.isMousedownLeftHalf = true;
     this.mouse.select.isMouseupLeftHalf = true;
-    this.chars.forEach(char => char.selectableZone.isSelected = false);
+    this.chars.forEach(char => char.selectZone.isSelected = false);
   }
 
   selectAllChars() {
@@ -80,20 +80,20 @@ export default class Store {
     }
 
     this.chars.forEach((char, i) => {
-      char.selectableZone.isSelected = (i >= beginIndex && i <= endIndex);
+      char.selectZone.isSelected = (i >= beginIndex && i <= endIndex);
     });
   }
 
   hasSelectedText() {
-    return this.chars.some(char => char.selectableZone.isSelected);
+    return this.chars.some(char => char.selectZone.isSelected);
   }
 
   deleteSelectedChars() {
-    const selectedChars = this.chars.filter(char => char.selectableZone.isSelected);
+    const selectedChars = this.chars.filter(char => char.selectZone.isSelected);
     if (selectedChars.length > 0) {
       const firstCharAfterSelectedChars = this.getNextChar(_.last(selectedChars));
       const lastCharBeforeSelectedChars = this.getPrevChar(_.first(selectedChars));
-      this.chars = this.chars.filter(char => !char.selectableZone.isSelected);
+      this.chars = this.chars.filter(char => !char.selectZone.isSelected);
       selectedChars.forEach(char => char.destructor());
       this.splitCharsIntoParagraphs();
       this.blinkingCursor.isShow = true;
@@ -260,7 +260,7 @@ export default class Store {
 
   copySelectedChars() {
     return window.navigator.clipboard.writeText(
-      this.chars.filter(char => char.selectableZone.isSelected).map(char => char.char).join('')
+      this.chars.filter(char => char.selectZone.isSelected).map(char => char.char).join('')
     ).catch((err) => {
       console.log('copy failed:', err);
     });
@@ -276,5 +276,13 @@ export default class Store {
     }).catch((err) => {
       console.log('paste failed:', err);
     });
+  }
+
+  calcCursorPosition() {
+    if (this.charUnderCursor) {
+      this.charUnderCursor.moveCursorToMyRight();
+    } else {
+      this.moveCursorToEnd();
+    }
   }
 }

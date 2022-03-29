@@ -1,7 +1,7 @@
 import IRenderable from '../IRenderable';
 import Store from '../Store';
-import Char from '../CanvasTextEditorChar';
-import CompositionChar from '../CanvasTextEditorCompositionChar';
+import Char from '../Char';
+import CompositionChar from '../CompositionChar';
 import { isCtrlOrCmdPressed } from '../Utils';
 
 const {round} = Math;
@@ -65,6 +65,11 @@ export default class BlinkingCursor implements IRenderable {
       this.input.removeEventListener('compositionstart', this.onCompositionStart);
       this.input.removeEventListener('compositionend', this.onCompositionEnd);
     }
+  }
+
+  move(dx: number, dy: number) {
+    this.left += dx;
+    this.top += dy;
   }
 
   show() {

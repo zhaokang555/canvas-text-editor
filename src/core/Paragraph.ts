@@ -1,8 +1,8 @@
-import Char from './CanvasTextEditorChar';
-import SoftLine from './CanvasTextEditorSoftLine';
+import Char from './Char';
+import SoftLine from './SoftLine';
 import Store from './Store';
 
-export default class CanvasTextEditorParagraph {
+export default class Paragraph {
   softLines: SoftLine[] = [];
   width = 0;
   height = 0;

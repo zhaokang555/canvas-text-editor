@@ -5,7 +5,7 @@ export interface IOptions {
   zIndex?: number;
 }
 
-export default class ClickableZone implements IBoundingBox {
+export default class ClickZone implements IBoundingBox {
   public zIndex = 0;
 
   constructor(

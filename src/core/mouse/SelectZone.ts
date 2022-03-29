@@ -4,7 +4,7 @@ import Store from '../Store';
 
 const backgroundColor = 'rgba(0, 0, 0, 0.15)';
 
-export default class SelectableZone implements IBoundingBox, IRenderable {
+export default class SelectZone implements IBoundingBox, IRenderable {
   isSelected = false;
 
   constructor(
