@@ -147,12 +147,14 @@ export default class Char implements IRenderable {
   };
 
   public handleMouseupLeft = () => {
+    console.log('Char.handleMouseup');
     this.store.mouse.select.mouseupChar = this;
     this.store.mouse.select.isMouseupLeftHalf = true;
     this.store.finishSelect();
   };
 
   public handleMouseupRight = () => {
+    console.log('Char.handleMouseup');
     this.store.mouse.select.mouseupChar = this;
     this.store.mouse.select.isMouseupLeftHalf = false;
     this.store.finishSelect();

@@ -92,6 +92,9 @@ export class CanvasTextEditor implements IRenderable {
   }
 
   addWidthHeight(dx: number, dy: number) {
+    if (this.width + dx < 0) dx = -this.width;
+    if (this.height + dy < 0) dy = -this.height;
+
     this.width += dx;
     this.height += dy;
     this.store.splitCharsIntoParagraphs();

@@ -48,6 +48,7 @@ export default class DragZone {
   }
 
   private handleMouseup = (evt: MouseEvent) => {
+    console.log('DragZone.handleMouseup');
     this.isDragging = false;
   };
 

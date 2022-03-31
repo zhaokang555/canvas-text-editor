@@ -20,7 +20,7 @@ https://zhaokang555.github.io/canvas-text-editor/
 - [x] Select all
 - [ ] Undo / Redo
 - [x] Move editor
-- [ ] Resize editor
+- [x] Resize editor
 - [ ] Multiple editors in one Canvas
 - [ ] Serialization / Deserialization
 - [ ] Import / Export

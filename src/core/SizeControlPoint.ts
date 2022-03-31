@@ -56,7 +56,7 @@ export class SizeControlPoint extends HoverZone {
       zIndex: defaultZIndex,
       ...options,
     });
-    this.dragZone = new DragZone(left, top, width, height, this.handleDrag, store);
+    this.dragZone = new DragZone(left, top, width, height, this.handleDrag, store, {zIndex: defaultZIndex});
   }
 
   destructor() {
@@ -84,8 +84,6 @@ export class SizeControlPoint extends HoverZone {
   }
 
   private handleDrag = (dx: number, dy: number) => {
-    // todo: Add zIndex for mousedown, mouseup, click event
-    return;
     const {editor} = this.store;
     const {TopLeft, Top, TopRight, BottomLeft, Bottom, BottomRight, Left, Right} = SizeControlPointType;
 
