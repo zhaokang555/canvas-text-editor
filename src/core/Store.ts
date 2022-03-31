@@ -29,6 +29,10 @@ export default class Store {
       isMousedownLeftHalf: true,
       isMouseupLeftHalf: true,
     },
+    mousedown: {
+      topLayerZIndex: -Infinity,
+      topLayerCallback: (() => {}) as () => void
+    },
   };
 
   constructor(public ctx: CanvasRenderingContext2D, public container: HTMLDivElement, public editor: Editor) {

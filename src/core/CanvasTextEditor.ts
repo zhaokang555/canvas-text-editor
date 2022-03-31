@@ -70,6 +70,9 @@ export class CanvasTextEditor implements IRenderable {
     this.store.mouse.click.topLayerCallbacks.forEach(cb => cb());
     this.store.mouse.click.topLayerCallbacks = [];
     this.store.mouse.click.topLayerZIndex = -Infinity;
+    this.store.mouse.mousedown.topLayerCallback();
+    this.store.mouse.mousedown.topLayerCallback = () => {};
+    this.store.mouse.mousedown.topLayerZIndex = -Infinity;
   };
 
   clearCanvas = () => {

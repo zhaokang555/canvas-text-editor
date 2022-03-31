@@ -43,7 +43,7 @@ export default class Border extends HoverZone {
       zIndex: defaultZIndex,
     });
 
-    this.dragZone = new DragZone(left, top, width, height, this.handleDrag, store);
+    this.dragZone = new DragZone(left, top, width, height, this.handleDrag, store, {zIndex: defaultZIndex});
   }
 
   destructor() {
@@ -74,6 +74,7 @@ export default class Border extends HoverZone {
   render() {
     super.render();
 
+    this.store.ctx.save();
     this.store.ctx.beginPath();
     this.store.ctx.strokeStyle = borderColor;
     this.store.ctx.lineWidth = borderWidth;
@@ -81,6 +82,7 @@ export default class Border extends HoverZone {
     this.store.ctx.moveTo(this.from.x, this.from.y);
     this.store.ctx.lineTo(this.to.x, this.to.y);
     this.store.ctx.stroke();
+    this.store.ctx.restore();
   }
 
   private handleDrag = (dx: number, dy: number) => {

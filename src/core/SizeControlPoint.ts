@@ -68,7 +68,6 @@ export class SizeControlPoint extends HoverZone {
     super.render();
 
     this.store.ctx.beginPath();
-    this.store.ctx.setLineDash([]);
     this.store.ctx.arc(this.centerX, this.centerY, radius, 0, Math.PI * 2);
     this.store.ctx.fillStyle = this.backgroundColor;
     this.store.ctx.fill();

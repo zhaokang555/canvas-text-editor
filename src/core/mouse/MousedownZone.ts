@@ -1,6 +1,12 @@
 import Store from '../Store';
 
+export interface IOptions {
+  zIndex?: number;
+}
+
 export default class MousedownZone {
+  zIndex = 0;
+
   constructor(
     public left: number,
     public top: number,
@@ -8,7 +14,10 @@ export default class MousedownZone {
     public height: number,
     public onMousedown: (mouseX: number, mouseY: number) => void,
     public store: Store,
+    options: IOptions = {},
   ) {
+    // @ts-ignore
+    Object.entries(options).forEach(([key, value]) => this[key] = value);
     this.store.ctx.canvas.addEventListener('mousedown', this.handleMousedown);
   }
 
@@ -36,8 +45,9 @@ export default class MousedownZone {
       (mouseX <= this.left + this.width) &&
       (mouseY <= this.top + this.height);
 
-    if (isOnMe) {
-      this.onMousedown(mouseX, mouseY);
+    if (isOnMe && this.zIndex > this.store.mouse.mousedown.topLayerZIndex) {
+      this.store.mouse.mousedown.topLayerCallback = () => this.onMousedown(mouseX, mouseY);
+      this.store.mouse.mousedown.topLayerZIndex = this.zIndex;
     }
   };
 }

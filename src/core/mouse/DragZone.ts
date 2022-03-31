@@ -1,6 +1,10 @@
 import Store from '../Store';
 import MousedownZone from './MousedownZone';
 
+export interface IOptions {
+  zIndex?: number;
+}
+
 export default class DragZone {
   startX = 0;
   startY = 0;
@@ -14,12 +18,13 @@ export default class DragZone {
     public height: number,
     public onDrag: (dx: number, dy: number) => void,
     public store: Store,
+    options: IOptions = {},
   ) {
     this.mousedownZone = new MousedownZone(left, top, width, height, (mouseX, mouseY) => {
       this.isDragging = true;
       this.startX = mouseX;
       this.startY = mouseY;
-    }, store);
+    }, store, options);
     this.store.ctx.canvas.addEventListener('mouseup', this.handleMouseup);
     this.store.ctx.canvas.addEventListener('mousemove', this.handleMousemove);
   }
@@ -47,6 +52,8 @@ export default class DragZone {
   };
 
   private handleMousemove = (evt: MouseEvent) => {
+    if (!this.isDragging) return;
+
     const rect = this.store.ctx.canvas.getBoundingClientRect();
     const mouseX = evt.clientX - rect.left;
     const mouseY = evt.clientY - rect.top;
@@ -55,8 +62,6 @@ export default class DragZone {
     this.startX = mouseX;
     this.startY = mouseY;
 
-    if (this.isDragging) {
-      this.onDrag(dx, dy);
-    }
+    this.onDrag(dx, dy);
   };
 }

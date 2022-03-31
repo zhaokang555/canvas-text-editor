@@ -6,7 +6,7 @@ export interface IOptions {
 }
 
 export default class ClickZone implements IBoundingBox {
-  public zIndex = 0;
+  zIndex = 0;
 
   constructor(
     public left: number,
@@ -27,17 +27,16 @@ export default class ClickZone implements IBoundingBox {
   }
 
   private handleClick = (evt: MouseEvent) => {
-
     const rect = this.store.ctx.canvas.getBoundingClientRect();
     const mouseX = evt.clientX - rect.left;
     const mouseY = evt.clientY - rect.top;
 
-    const isClickOnMe = (mouseX >= this.left) &&
+    const isOnMe = (mouseX >= this.left) &&
       (mouseY >= this.top) &&
       (mouseX <= this.left + this.width) &&
       (mouseY <= this.top + this.height);
 
-    if (isClickOnMe) {
+    if (isOnMe) {
       if (this.zIndex > this.store.mouse.click.topLayerZIndex) {
         this.store.mouse.click.topLayerCallbacks = [() => this.onClick(mouseX, mouseY)];
         this.store.mouse.click.topLayerZIndex = this.zIndex;
