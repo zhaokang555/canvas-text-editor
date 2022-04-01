@@ -86,6 +86,7 @@ export class CanvasTextEditor implements IRenderable {
     this.left += dx;
     this.top += dy;
     this.store.splitCharsIntoParagraphs();
+    this.blankSpace.move(dx, dy);
     this.borders.forEach(border => border.move(dx, dy));
     this.sizeControlPoints.forEach(point => point.move(dx, dy));
     this.store.calcCursorPosition();
@@ -98,6 +99,7 @@ export class CanvasTextEditor implements IRenderable {
     this.width += dx;
     this.height += dy;
     this.store.splitCharsIntoParagraphs();
+    this.blankSpace.addWidthHeight(dx, dy);
     this.borders.forEach(border => {
       border.addWidthHeight(dx, dy);
       if (border.type === BorderType.Right) {

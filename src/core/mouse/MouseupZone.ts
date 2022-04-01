@@ -16,6 +16,16 @@ export default class MouseupZone {
     this.store.ctx.canvas.removeEventListener('mouseup', this.handleMouseup);
   }
 
+  move(dx: number, dy: number) {
+    this.left += dx;
+    this.top += dy;
+  }
+
+  addWidthHeight(dx: number, dy: number) {
+    this.width += dx;
+    this.height += dy;
+  }
+
   private handleMouseup = (evt: MouseEvent) => {
     const rect = this.store.ctx.canvas.getBoundingClientRect();
     const mouseX = evt.clientX - rect.left;

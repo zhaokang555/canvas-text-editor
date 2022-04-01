@@ -34,6 +34,21 @@ export default class MouseDownUpClickZone {
     this.mouseupZone.destructor();
   }
 
+  move(dx: number, dy: number) {
+    this.setPosition(this.left + dx, this.top + dy);
+    this.clickZone.move(dx, dy);
+    this.mousedownZone.move(dx, dy);
+    this.mouseupZone.move(dx, dy);
+  }
+
+  addWidthHeight(dx: number, dy: number) {
+    this.width += dx;
+    this.height += dy;
+    this.clickZone.addWidthHeight(dx, dy);
+    this.mousedownZone.addWidthHeight(dx, dy);
+    this.mouseupZone.addWidthHeight(dx, dy);
+  }
+
   setPosition(left: number, top: number) {
     this._left = left;
     this._top = top;

@@ -26,6 +26,16 @@ export default class ClickZone implements IBoundingBox {
     this.store.ctx.canvas.removeEventListener('click', this.handleClick);
   }
 
+  move(dx: number, dy: number) {
+    this.left += dx;
+    this.top += dy;
+  }
+
+  addWidthHeight(dx: number, dy: number) {
+    this.width += dx;
+    this.height += dy;
+  }
+
   private handleClick = (evt: MouseEvent) => {
     const rect = this.store.ctx.canvas.getBoundingClientRect();
     const mouseX = evt.clientX - rect.left;
