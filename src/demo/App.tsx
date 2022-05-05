@@ -1,20 +1,28 @@
-import { useEffect, useRef } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { CanvasTextEditor } from '../core/CanvasTextEditor';
 import styles from './App.module.scss';
 
 function App() {
   const container = useRef<HTMLDivElement>(null);
+  let editor: CanvasTextEditor;
 
   useEffect(() => {
     if (container.current) {
-      new CanvasTextEditor(container.current, {left: 100, top: 100});
+      editor = new CanvasTextEditor(container.current, {left: 100, top: 100});
     }
   }, []);
 
+  const handleColorChange = (evt: FormEvent<HTMLInputElement>) => {
+    editor.setColor((evt.target as HTMLInputElement).value);
+  };
+
   return (
-    <div ref={container}>
-      <canvas width="800" height="600" className={styles.canvas}/>
-    </div>
+    <>
+      <input type="color" onChange={handleColorChange}/>
+      <div ref={container}>
+        <canvas width="800" height="600" className={styles.canvas}/>
+      </div>
+    </>
   );
 }
 

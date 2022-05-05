@@ -83,10 +83,14 @@ export default class BlinkingCursor implements IRenderable {
     this.input.value = '';
   }
 
-  checkShouldShow() {
+  getFocus() {
     if (document.activeElement !== this.input) {
       this.input.focus();
     }
+  }
+
+  checkShouldShow() {
+    this.getFocus();
     if (this.store.hasSelectedText()) {
       this.hide();
     } else {

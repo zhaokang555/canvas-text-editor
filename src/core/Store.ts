@@ -289,4 +289,14 @@ export default class Store {
       this.moveCursorToEnd();
     }
   }
+
+  setColor(color: string) {
+    if (this.hasSelectedText()) {
+      const selectedChars = this.chars.filter(char => char.selectZone.isSelected);
+      selectedChars.forEach(char => char.color = color);
+    } else {
+      this.blinkingCursor.color = color;
+    }
+    this.blinkingCursor.getFocus();
+  }
 }

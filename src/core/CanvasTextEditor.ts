@@ -59,6 +59,10 @@ export class CanvasTextEditor implements IRenderable {
     this.sizeControlPoints.forEach(point => point.destructor());
   }
 
+  setColor(color: string) {
+    this.store.setColor(color);
+  }
+
   render = () => {
     requestAnimationFrame(this.render);
     this.clearCanvas();
