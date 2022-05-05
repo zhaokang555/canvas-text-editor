@@ -151,6 +151,9 @@ export default class BlinkingCursor implements IRenderable {
         }
         break;
       case KeyboardEventKey.Enter:
+        if (this.store.hasSelectedText()) {
+          this.store.deleteSelectedChars();
+        }
         const char = new Char('\n', this.store, {color: this.color, fontSize: this.fontSize});
         this.store.insertChar(char);
         break;
