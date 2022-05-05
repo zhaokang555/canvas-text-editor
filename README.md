@@ -22,8 +22,6 @@ https://zhaokang555.github.io/canvas-text-editor/
 - [x] Move editor
 - [x] Resize editor
 - [ ] Multiple editors in one Canvas
-- [ ] Serialization / Deserialization
-- [ ] Import / Export
 - [ ] Real-time highlighting of selected text while dragging the mouse
 - [ ] Double-click to select the current line
 
