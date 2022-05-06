@@ -6,6 +6,7 @@ import CompositionChar from './CompositionChar';
 import { CanvasTextEditor as Editor } from './CanvasTextEditor';
 import SoftLine from './SoftLine';
 import _ from 'lodash';
+import EventEmitter from './mouse/EventEmitter';
 
 export default class Store {
   chars = [] as Char[];
@@ -13,6 +14,7 @@ export default class Store {
   blinkingCursor: BlinkingCursor;
   charUnderCursor: Char | null = null; // null means cursor at end
   isComposition = false;
+  eventEmitter = new EventEmitter();
 
   mouse = {
     click: {
@@ -55,7 +57,7 @@ export default class Store {
       this.mouse.select.mouseupChar = this.chars[this.chars.length - 1];
       this.mouse.select.isMouseupLeftHalf = false;
       this.finishSelect();
-      this.blinkingCursor.checkShouldShow();
+      this.blinkingCursor.hide();
     }
   }
 
@@ -86,6 +88,7 @@ export default class Store {
     this.chars.forEach((char, i) => {
       char.selectZone.isSelected = (i >= beginIndex && i <= endIndex);
     });
+    this.blinkingCursor.matchCharStyle(this.chars[beginIndex]);
   }
 
   hasSelectedText() {
@@ -103,10 +106,10 @@ export default class Store {
       this.blinkingCursor.isShow = true;
       if (firstCharAfterSelectedChars) {
         if (firstCharAfterSelectedChars.char !== '\n') {
-          firstCharAfterSelectedChars.moveCursorToMyLeft();
+          firstCharAfterSelectedChars.moveCursorToMyLeft(false);
         } else {
           if (lastCharBeforeSelectedChars) {
-            lastCharBeforeSelectedChars.moveCursorToMyRight();
+            lastCharBeforeSelectedChars.moveCursorToMyRight(false);
           } else {
             this.moveCursorToStart();
           }

@@ -95,43 +95,47 @@ export default class Char implements IRenderable {
     this.store.ctx.font = `${this.fontSize}px sans-serif`;
   }
 
-  public moveCursorToMyLeft = () => {
+  public moveCursorToMyLeft = (autoMathStyle = true) => {
     const {blinkingCursor} = this.store;
     const prevCharInSoftLine = this.store.getPrevCharInSoftLine(this);
 
     if (prevCharInSoftLine) {
       blinkingCursor.left = prevCharInSoftLine.rightHalf.left + prevCharInSoftLine.rightHalf.width;
       blinkingCursor.top = prevCharInSoftLine.rightHalf.top;
-      blinkingCursor.height = prevCharInSoftLine.fontSize;
-      blinkingCursor.color = prevCharInSoftLine.color;
-      blinkingCursor.fontSize = prevCharInSoftLine.fontSize;
+      autoMathStyle && blinkingCursor.matchCharStyle(prevCharInSoftLine);
     } else {
       blinkingCursor.left = this.leftHalf.left;
       blinkingCursor.top = this.leftHalf.top;
-      blinkingCursor.height = this.fontSize;
-      blinkingCursor.color = this.color;
-      blinkingCursor.fontSize = this.fontSize;
+      autoMathStyle && blinkingCursor.matchCharStyle(this);
     }
     this.store.charUnderCursor = this;
   };
 
-  public moveCursorToMyRight = () => {
+  public moveCursorToMyRight = (autoMathStyle = true) => {
     this.store.blinkingCursor.left = this.rightHalf.left + this.rightHalf.width;
     this.store.blinkingCursor.top = this.rightHalf.top;
-    this.store.blinkingCursor.height = this.fontSize;
-    this.store.blinkingCursor.color = this.color;
-    this.store.blinkingCursor.fontSize = this.fontSize;
+    autoMathStyle && this.store.blinkingCursor.matchCharStyle(this);
     this.store.charUnderCursor = this.store.getNextChar(this);
   };
 
   public handleClickLeft = () => {
-    this.moveCursorToMyLeft();
-    this.store.blinkingCursor.checkShouldShow();
+    this.store.blinkingCursor.getFocus();
+    if (this.store.hasSelectedText()) {
+      this.store.blinkingCursor.hide();
+    } else {
+      this.store.blinkingCursor.show();
+      this.moveCursorToMyLeft();
+    }
   };
 
   public handleClickRight = () => {
-    this.moveCursorToMyRight();
-    this.store.blinkingCursor.checkShouldShow();
+    this.store.blinkingCursor.getFocus();
+    if (this.store.hasSelectedText()) {
+      this.store.blinkingCursor.hide();
+    } else {
+      this.store.blinkingCursor.show();
+      this.moveCursorToMyRight();
+    }
   };
 
   public handleMousedownLeft = () => {

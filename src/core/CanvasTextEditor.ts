@@ -7,6 +7,8 @@ import Victor from 'victor';
 import SoftLine from './SoftLine';
 import Store from './Store';
 import MouseDownUpClickZone from './mouse/MouseDownUpClickZone';
+import { EventType } from './mouse/EventEmitter';
+export { EventType } from './mouse/EventEmitter';
 
 interface IOptions {
   left?: number;
@@ -61,6 +63,14 @@ export class CanvasTextEditor implements IRenderable {
 
   setColor(color: string) {
     this.store.setColor(color);
+  }
+
+  on(eventName: EventType, cb: Function) {
+    this.store.eventEmitter.on(eventName, cb);
+  }
+
+  off(eventName: EventType, cb?: Function) {
+    this.store.eventEmitter.off(eventName, cb);
   }
 
   render = () => {
@@ -144,14 +154,14 @@ export class CanvasTextEditor implements IRenderable {
     this.store.chars = [
       new Char('/', this.store, {color: 'red', fontSize: 72}),
       new Char('t', this.store, {color: 'orange', fontSize: 72}),
-      new Char('h', this.store, {color: '#dd0', fontSize: 72}),
+      new Char('h', this.store, {color: '#dddd00', fontSize: 72}),
       new Char('o', this.store, {color: 'green', fontSize: 72}),
       new Char('u', this.store, {color: 'lightblue', fontSize: 72}),
       new Char('g', this.store, {color: 'blue', fontSize: 72}),
       new Char('h', this.store, {color: 'purple', fontSize: 72}),
       new Char('t', this.store, {color: 'red', fontSize: 72}),
       new Char('w', this.store, {color: 'orange', fontSize: 72}),
-      new Char('o', this.store, {color: '#dd0', fontSize: 72}),
+      new Char('o', this.store, {color: '#dddd00', fontSize: 72}),
       new Char('r', this.store, {color: 'green', fontSize: 72}),
       new Char('k', this.store, {color: 'lightblue', fontSize: 72}),
       new Char('s', this.store, {color: 'blue', fontSize: 72}),
@@ -159,7 +169,7 @@ export class CanvasTextEditor implements IRenderable {
       new Char('思', this.store, {color: 'purple', fontSize: 72}),
       new Char('特', this.store, {color: 'red', fontSize: 72}),
       new Char('沃', this.store, {color: 'orange', fontSize: 72}),
-      new Char('克', this.store, {color: '#dd0', fontSize: 72}),
+      new Char('克', this.store, {color: '#dddd00', fontSize: 72}),
     ];
     this.store.splitCharsIntoParagraphs();
   }

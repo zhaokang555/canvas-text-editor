@@ -2,7 +2,8 @@ import IRenderable from '../IRenderable';
 import Store from '../Store';
 import Char from '../Char';
 import CompositionChar from '../CompositionChar';
-import { isCtrlOrCmdPressed } from '../Utils';
+import { colorNameToHex, isCtrlOrCmdPressed } from '../Utils';
+import { EventType } from './EventEmitter';
 
 const {round} = Math;
 const duration = 1000;
@@ -16,9 +17,17 @@ export default class BlinkingCursor implements IRenderable {
   height = 50;
   startBlinkingTimestamp = 0;
   input: HTMLInputElement;
-  color = '#000';
   fontSize = 50;
   isShow = false;
+
+  get color() {
+    return this._color;
+  }
+
+  set color(val) {
+    this._color = val;
+    this.store.eventEmitter.emit(EventType.colorChange, colorNameToHex(val));
+  }
 
   get left() {
     return this._left;
@@ -36,6 +45,7 @@ export default class BlinkingCursor implements IRenderable {
     this._top = round(val);
   }
 
+  private _color = '#000';
   private _left = -Infinity;
   private _top = -Infinity;
 
@@ -89,13 +99,10 @@ export default class BlinkingCursor implements IRenderable {
     }
   }
 
-  checkShouldShow() {
-    this.getFocus();
-    if (this.store.hasSelectedText()) {
-      this.hide();
-    } else {
-      this.show();
-    }
+  matchCharStyle(char: Char) {
+    this.height = char.fontSize;
+    this.color = char.color;
+    this.fontSize = char.fontSize;
   }
 
   render(): void {
